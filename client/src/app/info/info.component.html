@@ -1,0 +1,42 @@
+<div color="primary" class="div__headermenu">
+  <button mat-button class="button" (click)="onHome()">Home</button>
+  <h3 class="h3--left-right-margins">Info</h3>
+  <button mat-button class="button" (click)="onRegistration()">Anmeldung</button>
+  <button mat-button class="button" (click)="onTeam()">Kontakt</button>
+</div>
+<div class="info-container">
+  <h2>Einleitung</h2>
+  <p>Das Pfingstlager wird von einem <a [routerLink]="['/team']">Team</a> aus der (<a href="http://www.besj.ch">BESJ</a>)-Region
+    93 organisiert. Alle Jungschar- und Ameisli Gruppen aus dem oberen Baselbiet, welche dem BESJ angeschlossen sind,
+    gehören zu unserer Region. Unsere <a href="http://www.besj.ch/ueber-uns/der-besj/grundwerte/">Grundwerte</a> sind
+    auf
+    der Verbandswebseite zu finden.</p>
+  <p> Eingeladen für das Pfila sind alle Kinder der oben erwähnten Gruppen, sowie Kinder, die keiner Gruppe angehören.</p>
+  <h2>Thema</h2>
+  <p>Wie hören und erleben die biblische Geschichte von vom Verlorenen Sohn.</p>
+  <h2>Ort</h2>
+  <p>Der Pfila Lagerplatz liegt nördlich von Anwil in einer Waldlichtung.</p>
+  <h2>Datum</h2>
+  <ul>
+    <li>Das Pfila findet vom 08. - 10. Juni 2019 statt. Wir übernachten die beiden Nächte im Zelt.</li>
+    <li>Die Ameisli sind am Sonntag (09. Juni 2019) mit dabei.</li>
+  </ul>
+  <h2>Altersgrenzen</h2>
+  <ul>
+    <li>Jungschärler: Kinder zwischen 8-14 Jahren *</li>
+    <li>Ameisli: Kinder ab 5 Jahren **</li>
+    <p>** Die Altersangaben der einzelnen Gruppen können abweichen und sind jeweils verbindlich.</p>
+  </ul>
+  <h2>Kosten</h2>
+  <ul>
+    <li>Jungschärler: CHF 60.-</li>
+    <li>Ameisli: CHF 15.-</li>
+  </ul>
+  <h2>Anmeldeschluss</h2>
+  <p>Der Anmeldeschluss ist der Samstag, der <b>18. Mai 2019</b>.</p>
+  <h2>Anmeldung</h2>
+  <p>Du kannst dich <a [routerLink]="['/registration']">hier online</a> oder bei deinen Jungschi / Anmeisli Leitern
+    anmelden.</p>
+  <h2>Weitere Informationen</h2>
+  <p>Detailierte Informationen zum Pfila werden dir nach dem Anmeldeschluss per E-Mail oder per Post versandt.</p>
+</div>

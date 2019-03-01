@@ -1,0 +1,26 @@
+@keyframes slidy {
+  0% { left: 0%; }
+  40% { left: 0%; }
+  50% { left: -100%; }
+  90% { left: -100%; }
+  100% { left: 0%; }
+}
+
+body { margin: 0; }
+div#slider { overflow: hidden; }
+div#slider figure img { width: 50%; float: left; }
+div#slider figure {
+  position: relative;
+  width: 200%;
+  margin: 0;
+  left: 0;
+  text-align: left;
+  font-size: 0;
+  animation: 10s slidy infinite;
+}
+
+.button {
+  padding: 0 1em 0 1em;
+  margin: 0;
+  min-width: 0;
+}

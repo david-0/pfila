@@ -1,0 +1,23 @@
+{
+  "name": "default",
+  "type": "postgres",
+  "username": "pfila",
+  "password": "pfila",
+  "database": "pfila",
+  "synchronize": true,
+  "logging": true,
+  "entities": [
+    "dist/entity/*.js"
+  ],
+  "subscribers": [
+    "dist/subscriber/*.js"
+  ],
+  "migrations": [
+    "dist/migration/*.js"
+  ],
+  "cli": {
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/migration",
+    "subscribersDir": "src/subscriber"
+  }
+}

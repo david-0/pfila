@@ -1,0 +1,33 @@
+.admin-container {
+  margin: 0.5em;
+}
+
+.form {
+  max-width: 500px;
+  background-color: #F7F7F7;
+  border-radius: 5px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: baseline;
+}
+
+.wrap {
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.grayButton {
+  background: #A6BAC5;
+}
+
+.button-row {
+  display: flex;
+}

@@ -1,0 +1,20 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0.5em;
+}
+
+.card {
+  width: 250px;
+  margin: 0.5em;
+}
+
+.indent {
+  text-indent: 1em;
+}
+
+.button {
+  padding: 0 1em 0 1em;
+  margin: 0;
+  min-width: 0;
+}

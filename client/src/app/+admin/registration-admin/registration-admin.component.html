@@ -1,0 +1,53 @@
+<div *ngIf="!selectedPerson">
+  <div class="div__header  div--maxwith">
+    <h3 class="h3__small-margins">Anmeldungen</h3>
+    <span class="fill-remaining-space"></span>
+    <button mat-button  class="grayButton" [disabled]="!persons" (click)="saveFile()">
+      <mat-icon>forward</mat-icon>
+      Export
+    </button>
+  </div>
+  <div class="div--maxwith div--margins">
+    <!--  <div class="table">
+        <mat-select placeholder="Gruppenfilter" name="filter" class="topborder"
+                   (ngModelChange)="updateSubgroup($event)">
+          <mat-option *ngFor="let group of groups" [value]="group">
+            {{group.name }}
+          </mat-option>
+        </mat-select>-->
+
+    <div class="line" *ngFor="let person of persons | async">
+      <button mat-button class="grayButton" [routerLink]="[ '/admin/dashboard/change-person', person.id ]">
+        <mat-icon>edit</mat-icon>
+        <span class="size-xl">ändern</span></button>
+      <button mat-button class="grayButton" (click)="showDetails(person)">
+        <mat-icon>details</mat-icon>
+        <span class="size-xl">Details</span></button>
+      <button mat-button *ngIf="authenticationService.isAdmin()" class="grayButton"
+              (click)="openDialog(person.id, person.firstname, person.lastname)">
+        <mat-icon>delete</mat-icon>
+        <span class="size-xl">löschen</span></button>
+      <span class="span__gray">{{person.firstname}} {{person.lastname}},
+        {{person.subgroup?.name}} - {{person.subgroup?.group?.name}}</span>
+    </div>
+  </div>
+</div>
+<div *ngIf="selectedPerson">
+  <div class="div__header" (click)="hideDetails()">
+    <mat-icon class="icon--rightpad">arrow_back</mat-icon>
+    <h3 class="h3__small-margins">Details</h3>
+  </div>
+  <div class="details-container">
+    <p class="p__small-margin">Anmeldedatum: {{selectedPerson.createDate | date: "EEEE dd.MM.yyyy HH:mm:ss": "GMT": "de-CH"}}</p>
+    <p class="p__small-margin">Name: {{selectedPerson.firstname}} {{selectedPerson.lastname}}</p>
+    <p class="p__small-margin">Adresse: {{selectedPerson.street}} {{selectedPerson.streetNumber}}</p>
+    <p class="p__small-margin">Ort: {{selectedPerson.plz}} {{selectedPerson.city}}</p>
+    <p class="p__small-margin">E-Mail: {{selectedPerson.email}}</p>
+    <p class="p__small-margin">Telefonnummer: {{selectedPerson.phoneNumber}}</p>
+    <p class="p__small-margin">Geburtsdatum: {{selectedPerson.dateOfBirth}}</p>
+    <p class="p__small-margin">Allergien / Diät: {{selectedPerson.allergies}}</p>
+    <p class="p__small-margin">Bemerkungen: {{selectedPerson.comments}}</p>
+    <p class="p__small-margin">Infos per: {{selectedPerson.notification}}</p>
+    <p class="p__small-margin" *ngIf="selectedPerson.leader">Leiter: Ja</p>
+  </div>
+</div>

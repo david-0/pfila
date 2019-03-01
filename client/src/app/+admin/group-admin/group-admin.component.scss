@@ -1,0 +1,101 @@
+.icon--rightpad {
+  padding-right: 0.5em;
+}
+
+.group-edit-container {
+  margin: 0.5em;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.group-subgroup-container {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1000px;
+}
+
+.p__small-margin {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.grayButton {
+  background: #A6BAC5;
+  min-width: 10px;
+  margin: 0.2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.transparentButton {
+  min-width: 10px;
+  margin: 0.2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.span__gray {
+  background: #DDDDDD;
+  border-radius: 4px;
+  padding: 0.5em;
+  margin: 0.2em;
+  flex: 1 1 auto;
+  min-width: 160px;
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: baseline;
+  min-height: 3em;
+}
+
+.full-width {
+  width: 100%;
+  margin: 0.2em 0.5em 0.2em 0.5em;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: baseline;
+  min-height: 3em;
+}
+
+.section-small {
+  flex-grow: 1;
+  width: 5em;
+}
+
+.section-middle-size {
+  flex-grow: 2;
+  width: 10em;
+}
+
+.section-big {
+  flex-grow: 3;
+  width: 15em;
+}
+
+.size-xs {
+  display: none;
+}
+
+@media screen and (max-width: 1000px) {
+  .size-xl {
+    display: none;
+  }
+
+  .size-xs {
+    display: block;
+  }
+}
+
+

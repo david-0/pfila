@@ -1,0 +1,105 @@
+<div *ngIf="!userDialog">
+  <div class="div__header div--maxwith">
+    <h3 class="h3__small-margins">Benutzer</h3>
+    <span class="fill-remaining-space"></span>
+    <button mat-button class="grayButton" (click)="createUser()">
+      <mat-icon>add</mat-icon>
+      <span class="size-xl">erstellen</span></button>
+  </div>
+  <div class="div--margins div--maxwith">
+    <div class="line" *ngFor="let user of userWithRoles.getValue()">
+      <button mat-button class="grayButton" (click)="editUser(user)">
+        <mat-icon>edit</mat-icon>
+        <span class="size-xl">ändern</span></button>
+      <button mat-button *ngIf="authenticationService.isAdmin()" class="grayButton"
+              (click)="openDialog(user.id, user.firstname, user.lastname)">
+        <mat-icon>delete</mat-icon>
+        <span class="size-xl">löschen</span></button>
+      <span
+        class="span__gray">{{user.firstname}} {{user.lastname}}, {{user.email}}, Rollen: {{rolesAsString(user.roles)}}</span>
+    </div>
+  </div>
+</div>
+<div *ngIf="userDialog">
+  <form class="form" #f="ngForm" novalidate (ngSubmit)="saveUser(f.value, rolePairs)">
+    <div class="div__header">
+      <h3 class="h3__small-margins">{{detailHeader}}</h3>
+      <span class="fill-remaining-space"></span>
+      <button mat-button class="size-xs transparentButton" (click)="cancel()">
+        <mat-icon>undo</mat-icon>
+        <span class="size-xl"></span></button>
+      <button mat-button type="submit" class="size-xs transparentButton">
+        <mat-icon>save</mat-icon>
+        <span class="size-xl"></span></button>
+    </div>
+    <div class="div--margins div--font div--maxwith500">
+      <section class="section">
+        <mat-form-field class="full-width section-middle-size">
+          <input matInput placeholder="Vorname" name="firstname" required
+                 #firstnameControl="ngModel" [ngModel]="user.firstname">
+          <mat-hint *ngIf="!firstnameControl.valid" [ngStyle]="{'color': 'red'}" align="start">erforderlich
+          </mat-hint>
+        </mat-form-field>
+        <mat-form-field class="full-width section-middle-size">
+          <input matInput placeholder="Nachname" name="lastname" required
+                 #lastnameControl="ngModel" [ngModel]="user.lastname">
+          <mat-hint *ngIf="!lastnameControl.valid" [ngStyle]="{'color': 'red'}" align="start">erforderlich
+          </mat-hint>
+        </mat-form-field>
+      </section>
+      <section class="section">
+        <mat-form-field class="full-width section-middle-size">
+          <input matInput placeholder="E-Mail" name="email" required emailValidator
+                 #emailControl="ngModel" [ngModel]="user.email">
+          <mat-hint *ngIf="!emailControl.valid" [ngStyle]="{'color': 'red'}" align="start">erforderlich
+          </mat-hint>
+        </mat-form-field>
+      </section>
+      <section class="section">
+        <mat-card class="role-card">
+          <mat-card-title class="rolen-title">Rollen</mat-card-title>
+          <mat-card-content class="role-content">
+            <mat-checkbox *ngFor="let rolePair of rolePairs" name="{{rolePair.role.name}}" [(ngModel)]="rolePair.checked">
+              {{rolePair.role.name}}
+            </mat-checkbox>
+          </mat-card-content>
+        </mat-card>
+      </section>
+      <section class="section" *ngIf="!edit">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Passwort" name="password" type="password" #passwordControl="ngModel"
+                 [ngModel]="user.password" required validateEqual=confirmPassword reverse="true" minlength="8"
+                 password>
+          <mat-hint *ngIf="!passwordControl.valid" [ngStyle]="{'color': 'red'}" align="start">Klein & Gross & Zahl,
+            mind.
+            8 Zeichen
+            Zeichen
+          </mat-hint>
+        </mat-form-field>
+      </section>
+      <section class="section" *ngIf="edit">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Passwort" name="password" type="password" #passwordControl="ngModel"
+                 [ngModel]="user.password" validateEqual=confirmPassword reverse="true" minlength="8"
+                 password [digitCharacter]="1" [lowercaseCharacter]="1" [uppercaseCharacter]="1">
+          <mat-hint *ngIf="!passwordControl.valid" [ngStyle]="{'color': 'red'}" align="start">Klein & Gross & Zahl,
+            mind.
+            8 Zeichen
+            Zeichen
+          </mat-hint>
+        </mat-form-field>
+      </section>
+    </div>
+    <div class="button-row size-xl">
+      <span class="fill-remaining-space"></span>
+      <button mat-button class="grayButton" (click)="cancel()">
+        <mat-icon>undo</mat-icon>
+        Abbrechen
+      </button>
+      <button mat-button type="submit" [disabled]="!f.valid" class="grayButton">
+        <mat-icon>save</mat-icon>
+        Speichern
+      </button>
+    </div>
+  </form>
+</div>

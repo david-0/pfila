@@ -1,0 +1,13 @@
+<div color="primary" class="admin-container">
+  <button mat-button *ngIf="authenticationService.isAdmin()"
+          class="button" [routerLink]="['users']">Benutzer
+  </button>
+  <button mat-button *ngIf="authenticationService.isAdmin()" class="button"
+          [routerLink]="['groups']">Gruppen
+  </button>
+  <button mat-button class="button" [routerLink]="['registrations']">Anmeldungen</button>
+  <span class="fill-remaining-space"></span>
+  <button mat-button class="button" [routerLink]="['change-password']">Password ändern</button>
+  <button mat-button class="button" [routerLink]="['/admin/logout']">Logout</button>
+</div>
+<router-outlet></router-outlet>

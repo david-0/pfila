@@ -1,0 +1,98 @@
+.form {
+  max-width: 500px;
+  background-color: #F7F7F7;
+  border-radius: 5px;
+}
+
+.full-width {
+  width: 100%;
+  margin: 0.2em 0.5em 0.2em 0.5em;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: baseline;
+  min-height: 3em;
+}
+
+.tiny-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: baseline;
+  padding: 0.5em 0 0.5em 0em;
+}
+
+.wrap {
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.section-small {
+  flex-grow: 1;
+  width: 5em;
+}
+
+.section-middle-size {
+  flex-grow: 2;
+  width: 10em;
+}
+
+.section-big {
+  flex-grow: 3;
+  width: 15em;
+}
+
+.topborder {
+  margin-top: 1em;
+}
+
+.select-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5em;
+  min-width: 8em;
+}
+
+.date-element {
+  margin: 0.5em;
+}
+
+.h2-element {
+  margin: 0.5em;
+}
+
+.comment {
+  resize: vertical;
+}
+
+.grayButton {
+  background: #A6BAC5;
+}
+
+.button-row {
+  display: flex;
+}
+
+.hint {
+  margin-top: 0.2em;
+  margin-bottom: 0;
+  display: block;
+  font-size: 75%;
+  bottom: 0;
+  color: red;
+}
+
+.h3__padding {
+  padding-left: 0.5em;
+}
+
+.button {
+  padding: 0 1em 0 1em;
+  margin: 0;
+  min-width: 0;
+}
+
+

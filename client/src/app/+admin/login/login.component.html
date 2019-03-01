@@ -1,0 +1,26 @@
+<div class="div__header">
+  <h3 class="h3__small-margins h3__padding">Administrationsbereich</h3>
+</div>
+<div class="admin-container">
+  <h3>Anmeldung</h3>
+  <form class="form" [formGroup]="form" novalidate>
+    <section class="section">
+      <mat-form-field class="full-width">
+        <input matInput placeholder="E-Mail" formControlName="email">
+        <mat-hint *ngIf="!form.controls.email.valid" [ngStyle]="{'color': 'red'}" align="start">erforderlich
+        </mat-hint>
+      </mat-form-field>
+      <mat-form-field class="full-width exampleClass">
+        <input matInput placeholder="Passwort" formControlName="password" type="password">
+        <mat-hint *ngIf="!form.controls.password.valid" [ngStyle]="{'color': 'red'}" align="start">erforderlich</mat-hint>
+      </mat-form-field>
+    </section>
+    <p>{{message}}</p>
+    <div class="button-row">
+      <span class="fill-remaining-space"></span>
+      <button mat-button (click)="doLogin(form.value, form.valid)" [disabled]="!form.valid" class="grayButton">Login
+      </button>
+    </div>
+  </form>
+  <app-my-spinner [isRunning]="busy" [delay]="150"></app-my-spinner>
+</div>

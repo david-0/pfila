@@ -1,0 +1,44 @@
+<mat-sidenav-container fullscreen>
+  <header class="header">
+    <button mat-icon-button (click)="sidenav.open()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="header">
+      Pfila 2019
+    </h1>
+  </header>
+
+  <mat-sidenav mode="over" #sidenav>
+    <mat-toolbar class="toolbar__header">Menu
+    </mat-toolbar>
+    <mat-list>
+      <a mat-list-item [routerLink]="['/home']" (click)="sidenav.close()">
+        <mat-icon mat-list-icon>home</mat-icon>
+        <span mat-line>Home</span>
+        <span mat-line class="secondary">Home</span>
+      </a>
+      <a mat-list-item [routerLink]="['/info']" (click)="sidenav.close()">
+        <mat-icon mat-list-icon>info</mat-icon>
+        <span mat-line>Info</span>
+        <span mat-line class="secondary">Infomationen zum Pfila</span>
+      </a>
+      <a mat-list-item [routerLink]="['/registration']" (click)="sidenav.close()">
+        <mat-icon mat-list-icon>grade</mat-icon>
+        <span mat-line>Anmeldung</span>
+        <span mat-line class="secondary">für Ameisli, Jungschärler & Leiter</span>
+      </a>
+      <a mat-list-item [routerLink]="['/team']" (click)="sidenav.close()">
+        <mat-icon mat-list-icon>people</mat-icon>
+        <span mat-line>Kontakt</span>
+        <span mat-line class="secondary">Verantwortliches Team</span>
+      </a>
+      <div class="menu__separator"></div>
+      <a mat-list-item [routerLink]="['/admin']" (click)="sidenav.close()">
+        <mat-icon mat-list-icon>arrow_forward</mat-icon>
+        <span mat-line>Administration</span>
+        <span mat-line class="secondary">Administrationsbereich für Leiter</span>
+      </a>
+    </mat-list>
+  </mat-sidenav>
+  <router-outlet></router-outlet>
+</mat-sidenav-container>
