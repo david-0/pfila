@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "gulp",
+    "install": "cd server; rm -rf dist; npm run build; cp -pPr dist ../dist; cd .. ",
     "test": "gulp test"
   },
   "keywords": [],
