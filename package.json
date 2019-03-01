@@ -13,9 +13,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@angular/cli": "^7.3.3",
-    "gulp": "^4.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }
