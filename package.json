@@ -4,21 +4,18 @@
   "description": "Starter for Homepage 2019",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dleuenbe/pfila2017.git"
+    "url": "https://github.com/david-0/pfila.git"
   },
   "scripts": {
     "start": "gulp",
-    "install": "gulp install",
     "test": "gulp test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@angular/cli": "^7.3.2",
-    "@angular/material": "^2.0.0-beta.2",
-    "gulp": "^3.9.1",
-    "hammerjs": "^2.0.8"
+    "@angular/cli": "^7.3.3",
+    "gulp": "^4.0.0"
   },
   "devDependencies": {}
 }
