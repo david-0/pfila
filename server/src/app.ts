@@ -57,6 +57,7 @@ class Server {
     createConnection().then(async connection => {
       this.routes();
       this.staticRoutes();
+      this.defaultRoute();
       this.createServer();
       this.listen();
     }).catch(err => {
@@ -147,6 +148,12 @@ class Server {
       LOGGER.info(`Static-Route: serve files from "/client" in "/"`);
       this.app.use(express.static(__dirname + "/client", {redirect: true}));
     }
+  }
+
+  private defaultRoute(): void {
+    this.app.get("*", function (req, res) {
+      res.sendFile(__dirname + "/client/index.html");
+    });
   }
 
   private routes(): void {
