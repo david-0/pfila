@@ -74,8 +74,10 @@ cd pfila
 ## install dependencies (incl. cleanup)
 npm install
 
-## build
+## build or scp from notebook
 npm run build
+or build on notebook and copy
+scp -r server/dist davidl@88.99.118.38:~/website/pfila/server/
 
 ## start node server
 npm start
