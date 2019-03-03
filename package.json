@@ -8,11 +8,10 @@
   },
   "scripts": {
     "start": "gulp",
-    "build": "npm run build-clean; npm run build-server; npm run build-client",
-    "build-clean": "rm -rf dist ",
-    "build-server": "cd server; rm -rf dist; npm run build; cp -pPr dist ../dist; cd ..;",
-    "build-client": "cd client; npm run build-prod; cp -pPr dist/client ../dist; cd ..;",
-    "clean": "rm -rf dist; rm -rf client/node_modules; rm -rf client/dist; rm -rf server/node_modules rm -rf server/dist",
+    "build": "npm run build-server; npm run build-client",
+    "build-server": "cd server; rm -rf dist; npm run build; cd ..;",
+    "build-client": "cd client; rm -rf dist; npm run build-prod; cp -pPr dist/client ../server/dist; cd ..;",
+    "clean": "rm -rf client/node_modules; rm -rf server/node_modules",
     "install": "npm run clean; npm run install-server; npm run install-client",
     "install-server": "cd server; npm install; cd ..;",
     "install-client": "cd client; npm install; cd ..;"
