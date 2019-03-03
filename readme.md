@@ -12,8 +12,23 @@ apt update
 apt install postgresql
 
 sudo -u postgres -i
-createuser pfila
+createuser -P pfila
 createdb -O pfila pfila
+\q
+
+### insert initial admin user
+// this part can not be done after the app is initialy started, otherwise, the tables doesn't exists
+// create initial admin user and set password (for example abc), please change at first login
+sudo -u postgres -i
+psql pfila
+insert into "user" (id, email, firstname, lastname, password) values ('1','<user-Email>','<firstName>','<lastName>','');
+update "user" set password='$2a$10$VFhy9Jt1U2XHh8lnWVdym.n6Y0gBTdyZNfm8hbNqBdcQQN2BwC2Gy' where id=1;
+insert into role (id,name) values ('1','admin');
+insert into role (id,name) values ('2','standard');
+insert into role (id,name) values ('3','guest');
+insert into user_roles_role ("userId", "roleId") values ('1', '1');
+insert into user_roles_role ("userId", "roleId") values ('1', '2');
+insert into user_roles_role ("userId", "roleId") values ('1', '3');
 
 ## install nodejs
 curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
