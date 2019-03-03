@@ -46,5 +46,14 @@ gulp.task('start', function (done) {
   })
 })
 
+gulp.task('start-prod', function (done) {
+  nodemon({
+    script: 'dist/app.js'
+    , ext: 'js'
+    , env: { 'NODE_ENV': 'production' }
+    , done: done
+  })
+})
+
 //gulp.task('default', gulp.parallel('watch', 'assets', 'styles'));
 gulp.task('default', gulp.parallel('watch', 'start'));
