@@ -1,4 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
+import {SocketIoConfig} from 'ngx-socket-io';
 import {WINDOW} from './window-provider';
 
 @Injectable()
@@ -7,15 +8,11 @@ export class RestUrlPrefixService {
   constructor(@Inject(WINDOW) private window: Window) {
   }
 
-  private getHostname(): string {
-    return this.window.location.hostname;
-  }
-
   public getApiRestPrefix(): string {
     return this.getPublicRestPrefix() + '/api';
   }
 
   public getPublicRestPrefix(): string {
-    return 'http://' + this.getHostname() + ':3001';
+    return window.location.protocol + '://' + this.window.location.hostname + ':' + this.window.location.port;
   }
 }
