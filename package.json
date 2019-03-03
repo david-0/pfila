@@ -7,7 +7,7 @@
     "url": "https://github.com/david-0/pfila.git"
   },
   "scripts": {
-    "start": "cd server; gulp; cd ..;",
+    "start": "cd server; NODE_ENV=production node dist/app.js; cd ..;",
     "build": "npm run build-server; npm run build-client",
     "build-server": "cd server; rm -rf dist; npm run build; cd ..;",
     "build-client": "cd client; rm -rf dist; npm run build-prod; cp -pPr dist/client ../server/dist; cd ..;",
