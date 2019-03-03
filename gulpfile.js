@@ -10,4 +10,4 @@ gulp.task('start', function (done) {
   })
 })
 
-gulp.task('default', 'start');
+gulp.task('default', gulp.series('start'));

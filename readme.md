@@ -56,13 +56,15 @@ cd ../..
 git clone https://github.com/david-0/pfila.git
 cd pfila
 
-## install dependencies
-cd client
+## install dependencies (incl. cleanup)
 npm install
-cd ../server
-npm install
-cd ..
+
+## build
+npm run build
 
 ## start node server
 npm start
+
+## clean
+npm run clean
 
