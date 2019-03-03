@@ -44,8 +44,7 @@ import {UserAdminComponent} from './user-admin/user-admin.component';
 
 registerLocaleData(localeCh);
 
-// const host = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port;
-const host = window.location.protocol + '//' + window.location.hostname + ':3001';
+const host = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port;
 const config: SocketIoConfig = {url: host, options: {}};
 
 @NgModule({
