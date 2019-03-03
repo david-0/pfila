@@ -13,6 +13,6 @@ export class RestUrlPrefixService {
   }
 
   public getPublicRestPrefix(): string {
-    return window.location.protocol + '://' + this.window.location.hostname + ':' + this.window.location.port;
+    return window.location.protocol + '//' + this.window.location.hostname + ':' + this.window.location.port;
   }
 }
