@@ -8,12 +8,17 @@
   },
   "scripts": {
     "start": "gulp",
-    "install": "cd server; rm -rf dist; npm run build; cp -pPr dist ../dist; cd .. ",
+    "install": "npm run install-clean; npm run install-server; npm run install-client",
+    "install-clean": "rm -rf dist",
+    "install-server": "cd server; rm -rf dist; npm run build; cp -pPr dist ../dist; cd ..;",
+    "install-client": "cd client; npm run build-prod; cp -pPr dist ../dist; cd ..;",
     "test": "gulp test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "gulp": "^4.0.0"
+  },
   "devDependencies": {}
 }
