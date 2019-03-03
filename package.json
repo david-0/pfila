@@ -11,7 +11,7 @@
     "build": "npm run build-clean; npm run build-server; npm run build-client",
     "build-clean": "rm -rf dist ",
     "build-server": "cd server; rm -rf dist; npm run build; cp -pPr dist ../dist; cd ..;",
-    "build-client": "cd client; npm run build-prod; cp -pPr dist ../dist; cd ..;",
+    "build-client": "cd client; npm run build-prod; cp -pPr dist/client ../dist; cd ..;",
     "clean": "rm -rf dist; rm -rf client/node_modules; rm -rf client/dist; rm -rf server/node_modules rm -rf server/dist",
     "install": "npm run clean; npm run install-server; npm run install-client",
     "install-server": "cd server; npm install; cd ..;",
