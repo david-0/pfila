@@ -68,7 +68,7 @@ const config: SocketIoConfig = {url: host, options: {}};
     JwtModule.forRoot({
       config: {
         tokenGetter: AuthenticationService.getAccessToken,
-        whitelistedDomains: ['localhost:3001']
+        whitelistedDomains: ['localhost:3001', 'uf-und-drvoo.ch:3002', 'uf-und-drvoo.ch']
       }
     }),
   ],
