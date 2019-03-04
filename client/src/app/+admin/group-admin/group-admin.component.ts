@@ -158,7 +158,8 @@ export class GroupAdminComponent implements OnInit, OnDestroy {
 
   private saveSubgroup(subgroup: ISubgroup) {
     subgroup.group = this.selectedGroup;
-    if (subgroup.id) {
+    if (this.subgroupId) {
+      subgroup.id = this.subgroupId;
       this.subgroupRestService.update(subgroup).subscribe(ok => {
         this.updateGroupsAndSelectedGroups();
       });

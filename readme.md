@@ -62,9 +62,9 @@ see: https://en.wikibooks.org/wiki/Cryptography/Generate_a_keypair_using_OpenSSL
 mkdir certificate/jwt
 cd certificate/jwt
 ### create private key
-openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+openssl genpkey -algorithm RSA -out private-key.pem -pkeyopt rsa_keygen_bits:2048
 ### extract public key
-openssl rsa -pubout -in private_key.pem -out public_key.pem
+openssl rsa -pubout -in private-key.pem -out public-key.pem
 cd ../..
 
 ## checkout website
