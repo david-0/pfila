@@ -2,20 +2,29 @@ import * as bcrypt from "bcryptjs";
 import * as express from "express";
 import {Response} from "express";
 import {sign} from "jsonwebtoken";
+import * as moment from "moment";
 import {Authorized, Body, CurrentUser, HttpError, JsonController, Param, Post, Res} from "routing-controllers";
 import {EntityManager, getManager, Transaction, TransactionManager} from "typeorm";
+import {v4 as uuid} from "uuid";
+import {ResetToken} from "../entity/ResetToken";
 import {Role} from "../entity/Role";
 import {User} from "../entity/User";
 import {JwtConfiguration} from "../utils/JwtConfiguration";
+import {MailService} from "../utils/MailService";
+
+declare var process: any;
 
 @JsonController()
 export class SecurityController {
 
   // TODO Inject as Service
   private jwtConfig: JwtConfiguration;
+  private mailService: MailService;
 
   constructor() {
-    this.jwtConfig = new JwtConfiguration("development");
+    const env = process.env.NODE_ENV || "development";
+    this.jwtConfig = new JwtConfiguration(env);
+    this.mailService = new MailService("../../configuration/smtp.json");
   }
 
   @Post("/api/authenticate")
@@ -24,9 +33,7 @@ export class SecurityController {
     if (!!user && (typeof user !== "string")) {
       return {token: this.createToken(user)};
     }
-//            res.status(500).json({error: `error creating token for user: ${email}. ${err}`});
-//          console.info("login NOT successfull --> fake admin user");
-    return {token: this.createToken(this.createTestingAdminUser(body.email))};
+    return Promise.reject("login NOT successfull");
   }
 
   @Authorized("admin")
@@ -35,6 +42,7 @@ export class SecurityController {
     return this.changePassword(userId, body.password);
   }
 
+  @Authorized()
   @Post("/api/user/changemypassword")
   @Transaction()
   public async addChangeMyPasswordEndpoint(@TransactionManager() manager: EntityManager,
@@ -42,16 +50,42 @@ export class SecurityController {
     return this.changeMyPassword(manager, userId, body.currentPassword, body.password);
   }
 
+  @Post("/api/user/changepasswordbytoken")
+  @Transaction()
+  public async addChangePasswordByTokenEndpoint(@TransactionManager() manager: EntityManager, @Body() body: any, @Res() res: Response) {
+    const user = await this.findUserByToken(manager, body.token);
+    if (user) {
+      await this.updatePassword(user.id, body.password, manager);
+      return user;
+    }
+    return Promise.reject(new HttpError(401, "Token not valid"));
+  }
+
+  @Post("/api/user/createTokenByEmail")
+  @Transaction()
+  public async createTokenByEmailEndpoint(@TransactionManager() manager: EntityManager, @Body() body: any, @Res() res: Response): Promise<void> {
+    const user = await this.findUserbyEmail(body.email);
+    if (user) {
+      const resetToken = new ResetToken();
+      resetToken.user = user;
+      resetToken.token = uuid();
+      resetToken.validTo = moment().add(2, "h").toDate();
+      const insertResult = await manager.getRepository(ResetToken).insert(resetToken);
+      await this.sendResetToken(user, resetToken.token);
+    }
+    return;
+  }
+
   private async changeMyPassword(manager: EntityManager, userId: number, currentPassword: string, password: string): Promise<User> {
     const user = await this.findUserbyId(userId, manager);
-    const ok: boolean = await bcrypt.compare(currentPassword, user.password);
+    const userPassword = await this.getUserPassword(userId, manager);
+    const ok: boolean = await bcrypt.compare(currentPassword, userPassword.password);
     if (!ok) {
       return Promise.reject(new HttpError(401, "password not changed"));
     }
     await this.updatePassword(user.id, password, manager);
     return user;
   }
-
 
   private async changePassword(userId: number, password: string): Promise<User> {
     const user = await this.findUserbyId(userId, getManager());
@@ -69,7 +103,19 @@ export class SecurityController {
     return manager.getRepository(User).findOne({id: userId});
   }
 
-  private async findUserbyEmail(emailAddress: string): Promise<User> {
+  private getUserPassword(userId: number, manager: EntityManager): Promise<User> {
+    return manager.getRepository(User).findOne({id: userId}, {select: ['password']});
+  }
+
+  private async findUserByToken(manager: EntityManager, token: string): Promise<User | undefined> {
+    const resetToken = await manager.getRepository(ResetToken).findOne({id: token}, {relations: ["user"]});
+    if (resetToken && (resetToken.validTo <= new Date())) {
+      return resetToken.user;
+    }
+    return undefined;
+  }
+
+  private async findUserbyEmail(emailAddress: string): Promise<User | undefined> {
     return getManager().getRepository(User)
       .createQueryBuilder("user")
       .addSelect("user.password")
@@ -99,26 +145,16 @@ export class SecurityController {
     return new Promise<string>((resolve, reject) => resolve("Login not successful!"));
   }
 
-  /**
-   * TODO: remove before production
-   */
-  private createTestingAdminUser(email: string): User {
-    const role = new Role();
-    role.name = "admin";
-    const saleRole = new Role();
-    saleRole.name = "standard";
-    const storeRole = new Role();
-    storeRole.name = "guest";
-    const user = new User();
-    user.email = email;
-    user.roles = [role, saleRole, storeRole];
-    return user;
-  }
-
   private createToken(user: User): string {
     const roles = user.roles.map(role => role.name);
     return sign({id: user.id, roles},
       this.jwtConfig.getSignSecret(), this.jwtConfig.getSignOptions());
+  }
+
+  private async sendResetToken(user: User, token: string) {
+    await this.mailService.sendMail(user.email, "david.leuenberger@gmx.ch", "resetToken",
+      "Hallo\r\nResetlink: https://uf-und-drvoo.ch/resetPassword/"+token,
+      "<p>Hallo<br/><a href='https://uf-und-drvoo.ch/resetPassword/"+token+"'>reset password</a>");
   }
 }
 
