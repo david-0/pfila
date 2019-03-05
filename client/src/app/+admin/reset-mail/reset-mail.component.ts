@@ -10,6 +10,7 @@ import {AuthenticationService} from '../services/auth/authentication.service';
 export class ResetMailComponent implements OnInit {
 
   public busy = false;
+  public email: string;
 
   constructor(private authenticationService: AuthenticationService,
               private router: Router,
