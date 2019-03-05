@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, isDevMode, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {first} from 'rxjs/operators';
@@ -55,7 +55,11 @@ export class LoginComponent implements OnInit {
         if (error.status === 404) {
           this.message = `Anmeldeserver nicht erreichbar! (${error.url})`;
         } else {
-          this.message = JSON.stringify(error);
+          if (isDevMode()) {
+            this.message = 'Anmeldung nicht erfolgreich (Benuter/Password falsch)! ' + JSON.stringify(error);
+          } else {
+            this.message = 'Anmeldung nicht erfolgreich (Benuter/Password falsch)!';
+          }
         }
       });
   }
