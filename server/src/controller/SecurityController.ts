@@ -26,6 +26,9 @@ export class SecurityController {
   constructor() {
     this.env = process.env.NODE_ENV || "development";
     this.jwtConfig = new JwtConfiguration(this.env);
+    if (this.env === "production") {
+      this.jwtConfig.initProd("../../certificate/jwt/private-key.pem", "../../certificate/jwt/public-key.pem");
+    }
     this.mailService = new MailService("../../configuration/smtp.json");
   }
 
