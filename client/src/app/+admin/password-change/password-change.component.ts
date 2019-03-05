@@ -19,11 +19,7 @@ export class PasswordChangeComponent {
               private route: ActivatedRoute) {
   }
 
-  public changePassword(password: string): void {
-    this.updatePassword(password);
-  }
-
-  private updatePassword(values: any) {
+  public changePassword(values: any): void {
     this.busy = true;
     this.authenticationService.changeMyPassword(values.currentPassword, values.password).subscribe(done => {
       this.busy = false;
