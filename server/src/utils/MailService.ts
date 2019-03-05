@@ -17,20 +17,20 @@ export class MailService {
       this.port = +config.port;
       this.user = config.user;
       this.password = config.password;
+      this.from = config.from;
     }
   }
 
   public async sendMail(to: string, bcc: string, subject: string, text: string, html: string): Promise<SentMessageInfo> {
-    const transport = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: this.host,
       port: this.port,
-      secure: true,
       auth: {
         user: this.user,
-        password: this.password
-      }
+        pass: this.password
+      },
     });
-    return await transport.sendMail({
+    return await transporter.sendMail({
       from: this.from,
       to,
       subject,
