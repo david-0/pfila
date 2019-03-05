@@ -9,13 +9,13 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   }
 
   public async beforeUpdate(event: UpdateEvent<User>) {
-    if (event.entity.password) {
+    if (event.entity && event.entity.password) {
       event.entity.password =  await bcrypt.hash(event.entity.password, 10);
     }
   }
 
   public async beforeInsert(event: InsertEvent<User>) {
-    if (event.entity.password) {
+    if (event.entity && event.entity.password) {
       event.entity.password =  await bcrypt.hash(event.entity.password, 10);
     }
   }
