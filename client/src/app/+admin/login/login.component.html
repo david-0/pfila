@@ -17,6 +17,7 @@
     </section>
     <p>{{message}}</p>
     <div class="button-row">
+      <a routerLink="../resetMail" >Passwort vergesen?</a>
       <span class="fill-remaining-space"></span>
       <button mat-button (click)="doLogin(form.value, form.valid)" [disabled]="!form.valid" class="grayButton">Login
       </button>
