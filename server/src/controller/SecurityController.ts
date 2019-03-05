@@ -21,9 +21,11 @@ export class SecurityController {
   private jwtConfig: JwtConfiguration;
   private mailService: MailService;
 
+  private env: string;
+
   constructor() {
-    const env = process.env.NODE_ENV || "development";
-    this.jwtConfig = new JwtConfiguration(env);
+    this.env = process.env.NODE_ENV || "development";
+    this.jwtConfig = new JwtConfiguration(this.env);
     this.mailService = new MailService("../../configuration/smtp.json");
   }
 
@@ -50,13 +52,14 @@ export class SecurityController {
     return this.changeMyPassword(manager, userId, body.currentPassword, body.password);
   }
 
-  @Post("/api/user/changepasswordbytoken")
+  @Post("/api/user/resetPasswordWithToken")
   @Transaction()
-  public async addChangePasswordByTokenEndpoint(@TransactionManager() manager: EntityManager, @Body() body: any, @Res() res: Response) {
-    const user = await this.findUserByToken(manager, body.token);
-    if (user) {
-      await this.updatePassword(user.id, body.password, manager);
-      return user;
+  public async resetPasswordWithTokenEndpoint(@TransactionManager() manager: EntityManager, @Body() body: any, @Res() res: Response) {
+    const resetToken = await this.findResetTokenByToken(manager, body.token);
+    if (resetToken && resetToken.user) {
+      await this.updatePassword(resetToken.user.id, body.password, manager);
+      await manager.getRepository(ResetToken).remove(resetToken);
+      return resetToken.user;
     }
     return Promise.reject(new HttpError(401, "Token not valid"));
   }
@@ -104,13 +107,13 @@ export class SecurityController {
   }
 
   private getUserPassword(userId: number, manager: EntityManager): Promise<User> {
-    return manager.getRepository(User).findOne({id: userId}, {select: ['password']});
+    return manager.getRepository(User).findOne({id: userId}, {select: ["password"]});
   }
 
-  private async findUserByToken(manager: EntityManager, token: string): Promise<User | undefined> {
-    const resetToken = await manager.getRepository(ResetToken).findOne({id: token}, {relations: ["user"]});
-    if (resetToken && (resetToken.validTo <= new Date())) {
-      return resetToken.user;
+  private async findResetTokenByToken(manager: EntityManager, token: string): Promise<ResetToken | undefined> {
+    const resetToken = await manager.getRepository(ResetToken).findOne({token}, {relations: ["user"]});
+    if (resetToken && (resetToken.validTo >= new Date())) {
+      return resetToken;
     }
     return undefined;
   }
@@ -152,9 +155,26 @@ export class SecurityController {
   }
 
   private async sendResetToken(user: User, token: string) {
-    await this.mailService.sendMail(user.email, "david.leuenberger@gmx.ch", "resetToken",
-      "Hallo\r\nResetlink: https://uf-und-drvoo.ch/resetPassword/"+token,
-      "<p>Hallo<br/><a href='https://uf-und-drvoo.ch/resetPassword/"+token+"'>reset password</a>");
+    let domain = "http://localhost:4200/";
+    if (this.env === "production") {
+      domain = "https://uf-und-drvoo.ch";
+    }
+    const link = `${domain}/admin/resetPassword/${token}`;
+    await this.mailService.sendMail(user.email, "david.leuenberger@gmx.ch", "Pfila2019 - Passwort zurücksetzen",
+      "Hallo\r\n\r\n" +
+      "Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2019 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.\r\n\r\n" +
+      "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.\r\n" +
+      "Der Link ist zwei Stunden gültig.\r\n\r\n" + link + "\r\n\r\n" +
+      "Wenn Sie dieses Mail irrtümlich erhalten haben, können Sie es ignorieren.\r\n\r\n" +
+      "Webmaster Pfila 2019",
+      "<h3>Hallo</h3>" +
+      "<p>Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2019 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.<br/>" +
+      "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.<br/>" +
+      "Der Link ist zwei Stunden gültig.</p>" +
+      "<a href='" + link + "'>" + link + "</a>" +
+      "<p>Wenn Sie dieses Mail irrtümlich erhalten haben, können Sie es ignorieren.</p>" +
+      "<p>Webmaster Pfila 2019</p>"
+    );
   }
 }
 

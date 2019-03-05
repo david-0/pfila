@@ -53,6 +53,21 @@ export class AuthenticationService {
     );
   }
 
+  public resetPasswordWithToken(token: string, password: string): Observable<boolean> {
+    return this.http.post<AuthToken>(this.restUrlPrefixService.getApiRestPrefix() + '/user/resetPasswordWithToken', {
+      token,
+      password
+    }).pipe(
+      map(authToken => {
+        // changePassword successful if there's a jwt token in the response
+        if (!!authToken && !!authToken.token) {
+          this.updateToken(authToken);
+        }
+        return !!authToken;
+      })
+    );
+  }
+
   public changePassword(userId: number, password: string): Observable<boolean> {
     return this.http.post<AuthToken>(this.restUrlPrefixService.getApiRestPrefix() + `/user/${userId}/changepassword`, {password})
       .pipe(
@@ -64,6 +79,10 @@ export class AuthenticationService {
           return !!authToken;
         })
       );
+  }
+
+  public sendResetEmail(email: string): Observable<void> {
+    return this.http.post<void>(this.restUrlPrefixService.getApiRestPrefix() + `/user/createTokenByEmail`, {email}).pipe();
   }
 
   logout(): void {

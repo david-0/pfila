@@ -5,12 +5,13 @@ import {DashboardComponent} from '../dashboard/dashboard.component';
 import {GroupAdminComponent} from '../group-admin/group-admin.component';
 import {LoginComponent} from '../login/login.component';
 import {LogoutComponent} from '../logout/logout.component';
+import {ResetPasswortWithTokenComponent} from '../reset-password-with-token/reset-passwort-with-token.component';
 import {PasswordChangeConfirmationComponent} from '../password-change-confirmation/password-change-confirmation.component';
 import {PasswordChangeComponent} from '../password-change/password-change.component';
 import {PasswordNotChangeConfirmationComponent} from '../password-not-change-confirmation/password-not-change-confirmation.component';
+import {ResetMailComponent} from '../reset-mail/reset-mail.component';
 import {RegistrationAdminComponent} from '../registration-admin/registration-admin.component';
-import {AdminGuard} from '../services/auth/admin-guard.service';
-import {AdminOrStandardGuard} from '../services/auth/admin-or-standard-guard.service';
+import {ResetMailConfirmationComponent} from '../reset-mail-confirmation/reset-mail-confirmation.component';
 import {AuthGuard} from '../services/auth/auth-guard.service';
 import {UserAdminComponent} from '../user-admin/user-admin.component';
 
@@ -38,6 +39,9 @@ const routes: Routes = [
   },
   {path: 'login', component: LoginComponent},
   {path: 'logout', canActivate: [AuthGuard], component: LogoutComponent},
+  {path: 'resetMail', component: ResetMailComponent},
+  {path: 'resetMailConfirmation', component: ResetMailConfirmationComponent},
+  {path: 'resetPassword/:token', component: ResetPasswortWithTokenComponent},
 ];
 
 @NgModule({

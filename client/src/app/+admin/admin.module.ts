@@ -31,6 +31,7 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {GroupAdminComponent} from './group-admin/group-admin.component';
 import {LoginComponent} from './login/login.component';
 import {LogoutComponent} from './logout/logout.component';
+import {ResetPasswortWithTokenComponent} from './reset-password-with-token/reset-passwort-with-token.component';
 import {PasswordChangeConfirmationComponent} from './password-change-confirmation/password-change-confirmation.component';
 import {EqualValidator} from './password-change/equals-validator.directives';
 import {PasswordChangeComponent} from './password-change/password-change.component';
@@ -40,6 +41,8 @@ import {RegistrationAdminComponent} from './registration-admin/registration-admi
 import {AdminRouterModule} from './router/admin-router.module';
 import {AuthenticationService} from './services/auth/authentication.service';
 import {UserAdminComponent} from './user-admin/user-admin.component';
+import { ResetMailComponent } from './reset-mail/reset-mail.component';
+import { ResetMailConfirmationComponent } from './reset-mail-confirmation/reset-mail-confirmation.component';
 
 
 registerLocaleData(localeCh);
@@ -84,6 +87,9 @@ const config: SocketIoConfig = {url: host, options: {}};
     PasswordNotChangeConfirmationComponent,
     EqualValidator,
     ConfirmationDialogComponent,
+    ResetPasswortWithTokenComponent,
+    ResetMailComponent,
+    ResetMailConfirmationComponent,
   ],
   providers: [
     AuthenticationService,
