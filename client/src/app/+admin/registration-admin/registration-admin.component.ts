@@ -32,12 +32,18 @@ export class RegistrationAdminComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.message = `${firstname} ${lastname} löschen? `;
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'Ja') {
-        this.personRestService.del(id).subscribe();
+        this.personRestService.del(id).subscribe(ok => {
+          this.updatePersons();
+        });
       }
     });
   }
 
   ngOnInit() {
+    this.updatePersons();
+  }
+
+  private updatePersons() {
     this.personWithAllRestService.getAll().subscribe(list => {
       this.persons.next(list.sort((a, b) => this.compare(a, b)));
     });
@@ -61,10 +67,10 @@ export class RegistrationAdminComponent implements OnInit, OnDestroy {
   private compare(a: IPerson, b: IPerson): number {
     let result = 0;
     if (a.subgroup === null && b.subgroup !== null) {
-        return -1;
+      return -1;
     }
     if (a.subgroup !== null && b.subgroup === null) {
-        return 1;
+      return 1;
     }
     if (a.subgroup !== null && b.subgroup !== null) {
       if (a.subgroup.group === null && b.subgroup.group !== null) {
