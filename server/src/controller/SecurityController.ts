@@ -163,7 +163,7 @@ export class SecurityController {
       domain = "https://uf-und-drvoo.ch";
     }
     const link = `${domain}/admin/resetPassword/${token}`;
-    await this.mailService.sendMail(user.email, "david.leuenberger@gmx.ch", "Pfila2019 - Passwort zurücksetzen",
+    await this.mailService.sendMail(user.email, "Pfila2019 - Passwort zurücksetzen",
       "Hallo\r\n\r\n" +
       "Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2019 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.\r\n\r\n" +
       "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.\r\n" +
