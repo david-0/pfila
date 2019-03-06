@@ -1,4 +1,4 @@
-import {Authorized, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers";
+import {Authorized, CurrentUser, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers";
 import {getManager, Repository} from "typeorm";
 import {EntityFromBody, EntityFromParam} from "typeorm-routing-controllers-extensions";
 import {Person} from "../entity/Person";
@@ -25,29 +25,23 @@ export class PersonController {
 
   @Authorized("admin")
   @Put("/:id([0-9]+)")
-  public update(@EntityFromParam("id") person: Person, @EntityFromBody() newPerson: Person) {
-    return this.personRepository.save(this.personRepository.merge(person, newPerson));
-  }
-
-  @Authorized("admin")
-  @Post()
-  public save(@EntityFromBody() person: Person) {
-    return this.personRepository.save(person);
+  public update(@EntityFromParam("id") person: Person, @EntityFromBody() newPerson: Person, @CurrentUser({required: true}) userId: number) {
+    return this.personRepository.save(this.personRepository.merge(person, newPerson), {data: userId});
   }
 
   @Authorized("admin")
   @Delete("/:id([0-9]+)")
-  public delete(@EntityFromParam("id") person: Person) {
-    return this.personRepository.remove(person);
+  public delete(@EntityFromParam("id") person: Person, @CurrentUser({required: true}) userId: number) {
+    return this.personRepository.remove(person, {data: userId});
   }
 
-  @Authorized("standard")
+  @Authorized(["admin", "standard"])
   @Get("/withAll/:id([0-9]+)")
-  public getWithAll(@Param("id") id: number) {
+  public getWithAll(@Param("id") id: number, @CurrentUser({required: true}) userId: number) {
     return this.personRepository.findOne(id, {relations: ["subgroup", "subgroup.group"]});
   }
 
-  @Authorized("standard")
+  @Authorized()
   @Get("/withAll")
   public getAllWithAll() {
     return this.personRepository.find({relations: ["subgroup", "subgroup.group"]});
@@ -55,13 +49,12 @@ export class PersonController {
 
   @Post("/withAll")
   public saveWithAll(@EntityFromBody() person: Person) {
-    return this.personRepository.save(person);
+    return this.personRepository.insert(person);
   }
 
-  @Authorized("admin")
+  @Authorized(["admin", "standard"])
   @Put("/withAll/:id([0-9]+)")
-  public updateWithAll(@EntityFromParam("id") person: Person, @EntityFromBody() newPerson: Person) {
-    return this.personRepository.save(this.personRepository.merge(person, newPerson));
+  public updateWithAll(@EntityFromParam("id") person: Person, @EntityFromBody() newPerson: Person, @CurrentUser({required: true}) userId: number) {
+    return this.personRepository.save(this.personRepository.merge(person, newPerson), {data: userId});
   }
-
 }
