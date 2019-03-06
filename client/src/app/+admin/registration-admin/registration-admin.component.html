@@ -2,7 +2,7 @@
   <div class="div__header  div--maxwith">
     <h3 class="h3__small-margins">Anmeldungen</h3>
     <span class="fill-remaining-space"></span>
-    <button mat-button  class="grayButton" [disabled]="!persons" (click)="saveFile()">
+    <button mat-button class="grayButton" [disabled]="!persons" (click)="saveFile()">
       <mat-icon>forward</mat-icon>
       Export
     </button>
@@ -17,7 +17,8 @@
         </mat-select>-->
 
     <div class="line" *ngFor="let person of persons | async">
-      <button mat-button class="grayButton" [routerLink]="[ '/admin/dashboard/change-person', person.id ]">
+      <button mat-button *ngIf="authenticationService.isStandard() || authenticationService.isAdmin()"
+              class="grayButton" [routerLink]="[ '/admin/dashboard/change-person', person.id ]">
         <mat-icon>edit</mat-icon>
         <span class="size-xl">ändern</span></button>
       <button mat-button class="grayButton" (click)="showDetails(person)">
@@ -38,7 +39,8 @@
     <h3 class="h3__small-margins">Details</h3>
   </div>
   <div class="details-container">
-    <p class="p__small-margin">Anmeldedatum: {{selectedPerson.createDate | date: "EEEE dd.MM.yyyy HH:mm:ss": "GMT": "de-CH"}}</p>
+    <p class="p__small-margin">
+      Anmeldedatum: {{selectedPerson.createDate | date: "EEEE dd.MM.yyyy HH:mm:ss": "GMT": "de-CH"}}</p>
     <p class="p__small-margin">Name: {{selectedPerson.firstname}} {{selectedPerson.lastname}}</p>
     <p class="p__small-margin">Adresse: {{selectedPerson.street}} {{selectedPerson.streetNumber}}</p>
     <p class="p__small-margin">Ort: {{selectedPerson.plz}} {{selectedPerson.city}}</p>
