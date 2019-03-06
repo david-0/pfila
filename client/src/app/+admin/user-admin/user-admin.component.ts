@@ -21,7 +21,7 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   public rolePairs: RolePair[] = [];
   public userDialog: boolean;
   public edit: boolean;
-  private user: IUser = {firstname: '', lastname: '', email: '', password: '', roles: []};
+  private user: IUser = {firstname: '', lastname: '', email: '', password: '', notification: false, roles: []};
   private detailHeader: string;
 
   constructor(private http: HttpClient,

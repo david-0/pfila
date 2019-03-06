@@ -65,6 +65,11 @@
           </mat-card-content>
         </mat-card>
       </section>
+      <section class="section full-width">
+        <mat-checkbox name="leader" name="notification" [ngModel]="user.notification" #notificationControl="ngModel">
+          Benachrichtigungen bei Anmeldungen
+        </mat-checkbox>
+      </section>
       <section class="section" *ngIf="!edit">
         <mat-form-field class="full-width">
           <input matInput placeholder="Passwort" name="password" type="password" #passwordControl="ngModel"

@@ -1,5 +1,4 @@
 import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique} from "typeorm";
-import {Person} from "./Person";
 import {ResetToken} from "./ResetToken";
 import {Role} from "./Role";
 
@@ -21,6 +20,9 @@ export class User {
 
   @Column({select: false, nullable: true})
   public password: string;
+
+  @Column({default: false})
+  public notification: boolean;
 
   @ManyToMany(type => Role, role => role.users)
   @JoinTable()

@@ -6,5 +6,6 @@ export interface IUser extends DtoId {
   lastname: string;
   email: string;
   password: string;
+  notification: boolean;
   roles: Role[];
 }
