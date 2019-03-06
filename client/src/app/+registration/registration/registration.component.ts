@@ -120,7 +120,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
       allergies: data.allergies,
       comments: data.comments,
       notification: data.notification,
-      subgroup: this.subgroupControl.value,
+      subgroup: this.findSubgroup(this.subgroupControl.value),
       leader: !!data.leader,
     };
     console.log(person);
@@ -148,6 +148,19 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     }
   }
 
+
+  private findSubgroup(subgroupId: number): ISubgroup | undefined {
+    const groups = this.groups.getValue();
+    groups.forEach(g => {
+      g.subgroups.forEach(s => {
+        if (s.id === subgroupId) {
+          s.group = {id: g.id, name: g.name, subgroups: []};
+          return s;
+        }
+      });
+    });
+    return undefined;
+  }
 
   onTeam() {
     this.router.navigate(['../team'], {relativeTo: this.route});
