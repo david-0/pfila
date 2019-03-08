@@ -40,6 +40,8 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
   public async afterInsert(event: InsertEvent<Person>) {
     await this.reloadGroup(event.manager, event.entity);
     (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonCreated(u, event.entity));
+    this.registrationConfirmation(event.entity);
+
   }
 
   private async getUsersToNotifiy(manager: EntityManager): Promise<User[]> {
@@ -58,6 +60,25 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
       if (subgroupResult && subgroupResult.group) {
         person.subgroup = subgroupResult;
       }
+    }
+  }
+
+  private async registrationConfirmation(person: Person) {
+    if (person.subgroup && person.subgroup.group && person.email) {
+      let text = "Guten Tag\r\nDanke für die Anmeldung von '" + person.firstname + " " + person.lastname + "' für das Pfila 2019 " +
+        "bei der Gruppe '" + person.subgroup.name + " - " + person.subgroup.group.name + "'.\r\n\r\n";
+      if (person.subgroup.name === "Ameisli") {
+        text += "Die Ameislis sind am Pfila am Sonntag 09.06.2019 mit dabei.\r\n";
+      } else {
+        text += "Für die Jnugschärler dauert das Pfila vom Samstag - Montag (08.06. - 10.06.2019).\r\n";
+      }
+      if (person.subgroup.group.name === "keine") {
+        text += "In den nächsten Tagen werden wir mit ihnen Konkakt aufnehmen.\r\n";
+      }
+      text += "\r\nWeitere Infomationen sind auf unserer Homepage https://uf-und-drvoo.ch zu finden.\r\n\r\n";
+      text += "Sollten sie dieses Mail irrtümlicherweise erhalten haben bitten wir sie mit uns Kontakt auf zu nehmen.\r\n\r\n";
+      text += "Herzlichen Dank\r\nDas Pfila-Team";
+      await this.mailService.sendMail(person.email, "Pfila2019 - Anmeldungbestätigung", text, null);
     }
   }
 
