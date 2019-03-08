@@ -49,6 +49,7 @@
     <p class="p__small-margin">Geburtsdatum: {{selectedPerson.dateOfBirth}}</p>
     <p class="p__small-margin">Allergien / Diät: {{selectedPerson.allergies}}</p>
     <p class="p__small-margin">Bemerkungen: {{selectedPerson.comments}}</p>
+    <p class="p__small-margin">Gruppe: {{selectedPerson.subgroup?.name}} - {{selectedPerson.subgroup?.group?.name}}</p>
     <p class="p__small-margin">Infos per: {{selectedPerson.notification}}</p>
     <p class="p__small-margin" *ngIf="selectedPerson.leader">Leiter: Ja</p>
   </div>
