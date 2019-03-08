@@ -20,6 +20,7 @@ import {User} from "./entity/User";
 import {CustomErrorHandler} from "./utils/CustomErrorHandler";
 
 import {JwtConfiguration} from "./utils/JwtConfiguration";
+import {SuppressNextMiddlewareHandler} from "./utils/SuppressNextMiddlewareHandler";
 
 const LOGGER: Logger = getLogger("Server");
 
@@ -181,6 +182,7 @@ class Server {
       defaultErrorHandler: false,
       middlewares: [
         CustomErrorHandler,
+        SuppressNextMiddlewareHandler,
       ],
     });
   }
