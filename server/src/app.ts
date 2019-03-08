@@ -157,6 +157,15 @@ class Server {
   }
 
   private routes(): void {
+    let corsOptions = {};
+    if (this.env !== "producation") {
+      corsOptions = {
+        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+        methods: "POST, GET, PATCH, DELETE, PUT",
+        origin: "*",
+        preflightContinue: false,
+      };
+    }
     useExpressServer(this.app, {
       authorizationChecker: async (action: Action, roles: string[]) => this.authorizationChecker(action, roles),
       controllers: [
@@ -167,12 +176,7 @@ class Server {
         SubgroupController,
         UserController,
       ],
-      cors: {
-        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-        methods: "POST, GET, PATCH, DELETE, PUT",
-        origin: "*",
-        preflightContinue: false,
-      },
+      cors: corsOptions,
       currentUserChecker: async (action: Action) => this.currentUserChecker(action),
       defaultErrorHandler: false,
       middlewares: [
