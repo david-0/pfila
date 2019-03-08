@@ -12,6 +12,7 @@ import {PasswordNotChangeConfirmationComponent} from '../password-not-change-con
 import {ResetMailComponent} from '../reset-mail/reset-mail.component';
 import {RegistrationAdminComponent} from '../registration-admin/registration-admin.component';
 import {ResetMailConfirmationComponent} from '../reset-mail-confirmation/reset-mail-confirmation.component';
+import {AdminGuard} from '../services/auth/admin-guard.service';
 import {AuthGuard} from '../services/auth/auth-guard.service';
 import {UserAdminComponent} from '../user-admin/user-admin.component';
 
@@ -19,8 +20,8 @@ const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {
     path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent, children: [
-      {path: 'users', canActivate: [AuthGuard], component: UserAdminComponent},
-      {path: 'groups', canActivate: [AuthGuard], component: GroupAdminComponent},
+      {path: 'users', canActivate: [AdminGuard], component: UserAdminComponent},
+      {path: 'groups', canActivate: [AdminGuard], component: GroupAdminComponent},
       {path: 'registrations', canActivate: [AuthGuard], component: RegistrationAdminComponent},
       {path: 'change-person/:id', canActivate: [AuthGuard], component: RegistrationComponent},
       {path: 'change-password', canActivate: [AuthGuard], component: PasswordChangeComponent},
