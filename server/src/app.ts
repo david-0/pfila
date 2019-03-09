@@ -9,7 +9,7 @@ import * as path from "path";
 import "reflect-metadata";
 import {Action, useExpressServer} from "routing-controllers";
 import {Container} from "typedi";
-import {createConnection, useContainer} from "typeorm";
+import {createConnection, getManager, useContainer} from "typeorm";
 import {GroupController} from "./controller/GroupController";
 import {PersonController} from "./controller/PersonController";
 import {RoleController} from "./controller/RoleController";
@@ -20,6 +20,7 @@ import {User} from "./entity/User";
 import {CustomErrorHandler} from "./utils/CustomErrorHandler";
 
 import {JwtConfiguration} from "./utils/JwtConfiguration";
+import {ResetTokenEvictor} from "./utils/ResetTokenEvictor";
 import {SuppressNextMiddlewareHandler} from "./utils/SuppressNextMiddlewareHandler";
 
 const LOGGER: Logger = getLogger("Server");
@@ -29,7 +30,6 @@ declare var dirname: any;
 
 class Server {
 
-  // Bootstrap the application.
   public static bootstrap(): Server {
     return new Server();
   }
@@ -56,6 +56,7 @@ class Server {
     this.config();
     useContainer(Container);
     createConnection().then(async connection => {
+      new ResetTokenEvictor().schedule(0);
       this.routes();
       this.staticRoutes();
       this.defaultRoute();
