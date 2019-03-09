@@ -1,6 +1,7 @@
 import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {ResetToken} from "./ResetToken";
 import {Role} from "./Role";
+import {UserAudit} from "./UserAudit";
 
 @Entity()
 export class User {
@@ -30,4 +31,7 @@ export class User {
 
   @OneToMany(type => ResetToken, resetToken => resetToken.token, {cascade: true})
   public resetToken?: ResetToken[];
+
+  @OneToMany(type => UserAudit, userAudit => userAudit.user, {cascade: true})
+  public audit?: UserAudit[];
 }
