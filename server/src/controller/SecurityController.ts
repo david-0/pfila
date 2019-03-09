@@ -57,7 +57,7 @@ export class SecurityController {
       actionResult: actionResult,
       additionalData: body.email,
     };
-    this.userAuditRepository.insert(audit, {data: request});
+    this.userAuditRepository.save(audit, {data: request});
   }
 
 
