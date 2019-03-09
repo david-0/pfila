@@ -6,7 +6,7 @@ export class UserAudit {
   @PrimaryGeneratedColumn()
   public id?: number;
 
-  @ManyToOne(type => User, user => user.audit)
+  @ManyToOne(type => User, user => user.audits)
   public user: User;
 
   @Column()

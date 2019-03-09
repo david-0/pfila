@@ -57,4 +57,8 @@ export class UserController {
     return this.userRepository.remove(user);
   }
 
+  @Get("/withRolesAndAudit/:id([0-9]+)")
+  public getWithAudit(@Param("id") id: number) {
+    return this.userRepository.findOne(id, {relations: ["roles", "audits"]});
+  }
 }

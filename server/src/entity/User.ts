@@ -33,5 +33,5 @@ export class User {
   public resetToken?: ResetToken[];
 
   @OneToMany(type => UserAudit, userAudit => userAudit.user, {cascade: true})
-  public audit?: UserAudit[];
+  public audits?: UserAudit[];
 }
