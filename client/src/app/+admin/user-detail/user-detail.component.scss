@@ -1,0 +1,29 @@
+.p__small-margin{
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.details-container {
+  margin: 0.5em;
+  font-family: Roboto,"Helvetica Neue",sans-serif;
+}
+
+.icon--rightpad {
+  padding-right: 0.5em;
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.span__gray {
+  background: #DDDDDD;
+  border-radius: 4px;
+  padding: 0.5em;
+  margin: 0.2em;
+  flex: 1 1 auto;
+  //height: 1em;
+  min-width: 180px;
+}

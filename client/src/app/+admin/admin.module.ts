@@ -24,6 +24,7 @@ import {PersonRestService} from '../servies/rest/person-rest.service';
 import {PersonWithAllRestService} from '../servies/rest/person-with-all-rest.service';
 import {RolesRestService} from '../servies/rest/role-rest.service';
 import {SubgroupRestService} from '../servies/rest/subgroup-rest.service';
+import {UserWithRolesAndAuditRestService} from '../servies/rest/user-with-roles-and-audit-rest.service';
 import {UserWithRolesRestService} from '../servies/rest/user-with-roles-rest.service';
 import {WINDOW_PROVIDERS} from '../servies/window-provider';
 import {ConfirmationDialogComponent} from './confirmation-dialog/confirmation-dialog.component';
@@ -31,19 +32,19 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {GroupAdminComponent} from './group-admin/group-admin.component';
 import {LoginComponent} from './login/login.component';
 import {LogoutComponent} from './logout/logout.component';
-import {ResetPasswortWithTokenComponent} from './reset-password-with-token/reset-passwort-with-token.component';
 import {PasswordChangeConfirmationComponent} from './password-change-confirmation/password-change-confirmation.component';
 import {EqualValidator} from './password-change/equals-validator.directives';
 import {PasswordChangeComponent} from './password-change/password-change.component';
 import {PasswordNotChangeConfirmationComponent} from './password-not-change-confirmation/password-not-change-confirmation.component';
 import {CsvExporter} from './registration-admin/csv-exporter';
 import {RegistrationAdminComponent} from './registration-admin/registration-admin.component';
+import {ResetMailConfirmationComponent} from './reset-mail-confirmation/reset-mail-confirmation.component';
+import {ResetMailComponent} from './reset-mail/reset-mail.component';
+import {ResetPasswortWithTokenComponent} from './reset-password-with-token/reset-passwort-with-token.component';
 import {AdminRouterModule} from './router/admin-router.module';
 import {AuthenticationService} from './services/auth/authentication.service';
 import {UserAdminComponent} from './user-admin/user-admin.component';
-import { ResetMailComponent } from './reset-mail/reset-mail.component';
-import { ResetMailConfirmationComponent } from './reset-mail-confirmation/reset-mail-confirmation.component';
-
+import {UserDetailComponent} from './user-detail/user-detail.component';
 
 registerLocaleData(localeCh);
 
@@ -90,6 +91,7 @@ const config: SocketIoConfig = {url: host, options: {}};
     ResetPasswortWithTokenComponent,
     ResetMailComponent,
     ResetMailConfirmationComponent,
+    UserDetailComponent,
   ],
   providers: [
     AuthenticationService,
@@ -100,6 +102,7 @@ const config: SocketIoConfig = {url: host, options: {}};
     RolesRestService,
     SubgroupRestService,
     UserWithRolesRestService,
+    UserWithRolesAndAuditRestService,
     RestUrlPrefixService,
     CsvExporter,
     {provide: LOCALE_ID, useValue: 'de_ch'},

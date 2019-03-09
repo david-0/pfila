@@ -1,10 +1,12 @@
 import {HttpClient} from '@angular/common/http';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
+import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {Role} from '../../entities/role';
 import {IUser} from '../../entities/user';
 import {RolesRestService} from '../../servies/rest/role-rest.service';
+import {UserWithRolesAndAuditRestService} from '../../servies/rest/user-with-roles-and-audit-rest.service';
 import {UserWithRolesRestService} from '../../servies/rest/user-with-roles-rest.service';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 import {AuthenticationService} from '../services/auth/authentication.service';
@@ -27,8 +29,10 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient,
               private authenticationService: AuthenticationService,
               public dialog: MatDialog,
-              public userRestService: UserWithRolesRestService,
-              public roleRestService: RolesRestService) {
+              public userRestService: UserWithRolesAndAuditRestService,
+              public roleRestService: RolesRestService,
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
   openDialog(id: number, firstname: string, lastname: string) {
@@ -95,12 +99,16 @@ export class UserAdminComponent implements OnInit, OnDestroy {
     });
   }
 
-  private editUser(user: IUser) {
+  public editUser(user: IUser) {
     this.user = user;
     this.detailHeader = 'Benutzer ändern';
     this.userDialog = true;
     this.edit = true;
     this.updateRolePairs();
+  }
+
+  public showDetails(user: IUser) {
+    this.router.navigate([`detail/${user.id}`], {relativeTo: this.route});
   }
 
   private createUser() {

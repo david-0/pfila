@@ -11,12 +11,15 @@
       <button mat-button class="grayButton" (click)="editUser(user)">
         <mat-icon>edit</mat-icon>
         <span class="size-xl">ändern</span></button>
+      <button mat-button class="grayButton" (click)="showDetails(user)">
+        <mat-icon>details</mat-icon>
+        <span class="size-xl">Details</span></button>
       <button mat-button *ngIf="authenticationService.isAdmin()" class="grayButton"
               (click)="openDialog(user.id, user.firstname, user.lastname)">
         <mat-icon>delete</mat-icon>
         <span class="size-xl">löschen</span></button>
-      <span
-        class="span__gray">{{user.firstname}} {{user.lastname}}, {{user.email}}, Rollen: {{rolesAsString(user.roles)}}</span>
+      <span class="span__gray">{{user.firstname}} {{user.lastname}}, {{user.email}}
+        , Rollen: {{rolesAsString(user.roles)}}, Audits: {{user.audits?.length}}</span>
     </div>
   </div>
 </div>
@@ -59,7 +62,8 @@
         <mat-card class="role-card">
           <mat-card-title class="rolen-title">Rollen</mat-card-title>
           <mat-card-content class="role-content">
-            <mat-checkbox *ngFor="let rolePair of rolePairs" name="{{rolePair.role.name}}" [(ngModel)]="rolePair.checked">
+            <mat-checkbox *ngFor="let rolePair of rolePairs" name="{{rolePair.role.name}}"
+                          [(ngModel)]="rolePair.checked">
               {{rolePair.role.name}}
             </mat-checkbox>
           </mat-card-content>
