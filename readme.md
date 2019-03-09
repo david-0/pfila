@@ -85,3 +85,6 @@ npm start
 ## clean
 npm run clean
 
+# activate autostart
+crontab -e
+@reboot /home/alixon/usr/davidl/website/pfila/start.sh
