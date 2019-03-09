@@ -21,6 +21,7 @@ import {CustomErrorHandler} from "./utils/CustomErrorHandler";
 
 import {JwtConfiguration} from "./utils/JwtConfiguration";
 import {ResetTokenEvictor} from "./utils/ResetTokenEvictor";
+import {StartupNotifier} from "./utils/StartupNotifier";
 import {SuppressNextMiddlewareHandler} from "./utils/SuppressNextMiddlewareHandler";
 
 const LOGGER: Logger = getLogger("Server");
@@ -57,6 +58,7 @@ class Server {
     useContainer(Container);
     createConnection().then(async connection => {
       new ResetTokenEvictor().schedule(0);
+      new StartupNotifier().notify("david.leuenberger@gmx.ch");
       this.routes();
       this.staticRoutes();
       this.defaultRoute();
