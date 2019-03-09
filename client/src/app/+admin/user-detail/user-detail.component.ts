@@ -9,7 +9,7 @@ import {UserWithRolesAndAuditRestService} from '../../servies/rest/user-with-rol
   styleUrls: ['./user-detail.component.scss']
 })
 export class UserDetailComponent implements OnInit {
-  private user: IUser;
+  public user: IUser;
 
   constructor(private route: ActivatedRoute, private rest: UserWithRolesAndAuditRestService) {
   }
