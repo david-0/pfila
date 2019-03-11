@@ -1,8 +1,8 @@
 const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const sourcemaps = require('gulp-sourcemaps');
-var sass = require('gulp-sass');
-var nodemon = require('gulp-nodemon');
+const sass = require('gulp-sass');
+const nodemon = require('gulp-nodemon');
 
 const JSON_FILES = ['src/*.json', 'src/**/*.json'];
 
