@@ -63,6 +63,8 @@ class Server {
       this.staticRoutes();
       this.defaultRoute();
       this.createServer();
+
+      // Start listening
       this.listen();
     }).catch(err => {
       LOGGER.error("Create Connection error: {}", err);

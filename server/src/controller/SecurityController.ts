@@ -43,7 +43,7 @@ export class SecurityController {
     }
     const checkedUser = await this.checkLogin(user, body.password);
     if (!!checkedUser && (typeof checkedUser !== "string")) {
-      this.authenticateAudit("success", checkedUser, body, request), {data: request};
+      this.authenticateAudit("success", checkedUser, body, request);
       return {token: this.createToken(checkedUser)};
     }
     this.authenticateAudit("password failed", checkedUser, body, request);
