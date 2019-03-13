@@ -63,7 +63,12 @@ export class UserController {
   }
 
   @Get("/withRolesAndAudit/:id([0-9]+)")
-  public getWithAudit(@Param("id") id: number) {
+  public getWithRolesAndAudit(@Param("id") id: number) {
     return this.userRepository.findOne(id, {relations: ["roles", "audits"]});
+  }
+
+  @Put("/withRolesAndAudit/:id([0-9]+)")
+  public updateWithRolesAndAudit(@EntityFromParam("id") user: User, @EntityFromBody() newUser: User) {
+    return this.userRepository.save(this.userRepository.merge(user, newUser));
   }
 }
