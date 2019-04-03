@@ -21,9 +21,9 @@ const routes: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {
     path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent, children: [
-      {path: 'users', canActivate: [AdminGuard], component: UserAdminComponent},
-      {path: 'users/detail/:id', canActivate: [AdminGuard], component: UserDetailComponent},
-      {path: 'groups', canActivate: [AdminGuard], component: GroupAdminComponent},
+      {path: 'users', canActivate: [AuthGuard], component: UserAdminComponent},
+      {path: 'users/detail/:id', canActivate: [AuthGuard], component: UserDetailComponent},
+      {path: 'groups', canActivate: [AuthGuard], component: GroupAdminComponent},
       {path: 'registrations', canActivate: [AuthGuard], component: RegistrationAdminComponent},
       {path: 'change-person/:id', canActivate: [AuthGuard], component: RegistrationComponent},
       {path: 'change-password', canActivate: [AuthGuard], component: PasswordChangeComponent},
