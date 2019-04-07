@@ -70,7 +70,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
       if (person.subgroup.name === "Ameisli") {
         text += "Die Ameislis sind am Pfila am Sonntag 09.06.2019 mit dabei.\r\n";
       } else {
-        text += "Für die Jnugschärler dauert das Pfila vom Samstag - Montag (08.06. - 10.06.2019).\r\n";
+        text += "Für die Jungschärler dauert das Pfila vom Samstag - Montag (08.06. - 10.06.2019).\r\n";
       }
       if (person.subgroup.group.name === "keine") {
         text += "In den nächsten Tagen werden wir mit ihnen Konkakt aufnehmen.\r\n";
