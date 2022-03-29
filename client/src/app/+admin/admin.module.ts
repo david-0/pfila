@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ValidatorsModule } from 'ngx-validators';
+import { ENV_PROVIDERS } from 'src/environments/environment';
 import { RegistrationModule } from '../+registration/registration.module';
 import { MySpinnerModule } from '../my-spinner/my-spinner.module';
 import { RestUrlPrefixService } from '../servies/rest-url-prefix.service';
@@ -99,6 +100,7 @@ const config: SocketIoConfig = { url: host, options: {} };
     UserWithRolesAndAuditRestService,
     RestUrlPrefixService,
     CsvExporter,
+    ENV_PROVIDERS,
     { provide: LOCALE_ID, useValue: 'de_ch' },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

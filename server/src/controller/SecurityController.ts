@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import * as express from "express";
 import {sign} from "jsonwebtoken";
+import { getLogger, Logger } from "log4js";
 import * as moment from "moment";
 import {Authorized, Body, CurrentUser, HttpError, JsonController, Param, Post, Req} from "routing-controllers";
 import {EntityManager, getManager, Repository, Transaction, TransactionManager} from "typeorm";
@@ -16,6 +17,8 @@ declare var process: any;
 
 @JsonController()
 export class SecurityController {
+
+  private LOGGER: Logger = getLogger("SecurityController");
 
   // TODO Inject as Service
   private jwtConfig: JwtConfiguration;
@@ -46,7 +49,7 @@ export class SecurityController {
       this.authenticateAudit("success", checkedUser, body, request);
       return {token: this.createToken(checkedUser)};
     }
-    this.authenticateAudit("password failed", checkedUser, body, request);
+    this.authenticateAudit("password failed", user, body, request);
     return Promise.reject("login NOT successfull");
   }
 
@@ -130,9 +133,8 @@ export class SecurityController {
     return user;
   }
 
-  private async updatePassword(userId: number, password: string, manager: EntityManager): Promise<void> {
-    const passwordHash = await bcrypt.hash(password, 10);
-    const update = await manager.getRepository(User).update({id: userId}, {password: passwordHash});
+  private async updatePassword(userId: number, unhashedPwd: string, manager: EntityManager): Promise<void> {
+    await manager.getRepository(User).update({id: userId}, {password: unhashedPwd});
     return;
   }
 
@@ -232,20 +234,21 @@ export class SecurityController {
       domain = "https://uf-und-drvoo.ch";
     }
     const link = `${domain}/admin/resetPassword/${token}`;
-    await this.mailService.sendMail(user.email, "Pfila2019 - Passwort zurücksetzen",
+    this.LOGGER.info(`resetLink:${link}`);
+    await this.mailService.sendMail(user.email, "Pfila2022 - Passwort zurücksetzen",
       "Hallo\r\n\r\n" +
-      "Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2019 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.\r\n\r\n" +
+      "Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2022 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.\r\n\r\n" +
       "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.\r\n" +
       "Der Link ist zwei Stunden gültig.\r\n\r\n" + link + "\r\n\r\n" +
       "Wenn du dieses Mail irrtümlich erhalten hast, kannst du es ignorieren.\r\n\r\n" +
-      "Webmaster Pfila 2019",
+      "Webmaster Pfila 2022",
       "<h3>Hallo</h3>" +
-      "<p>Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2019 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.<br/>" +
+      "<p>Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2022 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.<br/>" +
       "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.<br/>" +
       "Der Link ist zwei Stunden gültig.</p>" +
       "<a href='" + link + "'>" + link + "</a>" +
       "<p>Wenn Sie dieses Mail irrtümlich erhalten haben, können Sie es ignorieren.</p>" +
-      "<p>Webmaster Pfila 2019</p>"
+      "<p>Webmaster Pfila 2022</p>"
     );
   }
 }

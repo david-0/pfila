@@ -1,8 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { Authorized, Body, Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
-import { EntityManager, Repository, TransactionManager } from "typeorm";
+import { EntityManager, Repository, Transaction, TransactionManager } from "typeorm";
 import { Group } from "../entity/Group";
-
 
 @JsonController("/api/group")
 export class GroupController {
@@ -12,18 +11,21 @@ export class GroupController {
     this.groupRepository = manager => manager.getRepository(Group);
   }
 
+  @Transaction()
   @Authorized("admin")
   @Get("/:id([0-9]+)")
   public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number): Promise<Group> {
     return await this.groupRepository(manager).findOne(id);
   }
 
+  @Transaction()
   @Authorized("admin")
   @Get()
   public async getAll(@TransactionManager() manager: EntityManager): Promise<Group[]> {
     return await this.groupRepository(manager).find();
   }
 
+  @Transaction()
   @Authorized("admin")
   @Put("/:id([0-9]+)")
   public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newGroupFromBody: Group) {
@@ -32,6 +34,7 @@ export class GroupController {
     return await this.groupRepository(manager).save(this.groupRepository(manager).merge(group, newGroup));
   }
 
+  @Transaction()
   @Authorized("admin")
   @Post()
   public save(@TransactionManager() manager: EntityManager, @Body() newGroupFromBody: Group) {
@@ -39,6 +42,7 @@ export class GroupController {
     return this.groupRepository(manager).save(newGroup);
   }
 
+  @Transaction()
   @Authorized("admin")
   @Delete("/:id([0-9]+)")
   public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
@@ -47,17 +51,20 @@ export class GroupController {
     return await this.groupRepository(manager).remove(group);
   }
 
+  @Transaction()
   @Authorized("admin")
   @Get("/withSubgroups/:id([0-9]+)")
   public async getWithAll(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
     return await this.groupRepository(manager).findOne(id, { relations: ["subgroups"] });
   }
 
+  @Transaction()
   @Get("/withSubgroups")
   public async getAllWithAll(@TransactionManager() manager: EntityManager): Promise<Group[]> {
     return await this.groupRepository(manager).find({ relations: ["subgroups"] });
   }
 
+  @Transaction()
   @Authorized("admin")
   @Post("/withSubgroups")
   public saveWithSubgroups(@TransactionManager() manager: EntityManager, @Body() newGroupFromBody: Group) {
@@ -65,6 +72,7 @@ export class GroupController {
     return this.groupRepository(manager).save(newGroup);
   }
 
+  @Transaction()
   @Authorized("admin")
   @Delete("/withSubgroups/:id([0-9]+)")
   public async deleteWithSubgroups(@TransactionManager() manager: EntityManager, @Param("id") id: number) {

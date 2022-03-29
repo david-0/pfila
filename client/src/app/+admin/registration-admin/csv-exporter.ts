@@ -93,7 +93,7 @@ export class CsvExporter {
 
   private saveAsExcelFile(buffer: any, fileName: string): void {
     const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
-    const date = new DateTime().toFormat('YYYY-MM-DD HHmmss');
+    const date = DateTime.now().toFormat('yyyy-MM-dd HHmmss');
     saveAs(data, fileName + '_' + date + EXCEL_EXTENSION);
   }
 }
