@@ -1,3 +1,4 @@
+import { plainToInstance } from "class-transformer";
 import {
   EntityManager,
   EntitySubscriberInterface,
@@ -25,10 +26,11 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
   }
 
   public async beforeUpdate(event: UpdateEvent<Person>) {
+    const person = plainToInstance(Person, event.entity);
     const currentUser = await event.manager.getRepository(User).findOne(event.queryRunner.data);
     const userBeforeUpdate = await event.manager.getRepository(Person).findOne(event.databaseEntity.id, {relations: ["subgroup", "subgroup.group"]});
-    await this.reloadGroup(event.manager, event.entity);
-    (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonChanged(u, userBeforeUpdate, event.entity, currentUser));
+    await this.reloadGroup(event.manager, person);
+    (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonChanged(u, userBeforeUpdate, person, currentUser));
   }
 
   public async beforeRemove(event: RemoveEvent<Person>) {

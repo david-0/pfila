@@ -9,8 +9,8 @@ const routes: Routes = [
   {path: 'home', component: HomeComponent},
   {path: 'info', component: InfoComponent},
   {path: 'team', component: TeamComponent},
-  {path: 'registration', loadChildren: './+registration/registration.module#RegistrationModule'},
-  {path: 'admin', loadChildren: './+admin/admin.module#AdminModule'},
+  {path: 'registration', loadChildren: () => import('./+registration/registration.module').then(m => m.RegistrationModule)},
+  {path: 'admin', loadChildren: () => import('./+admin/admin.module').then(m => m.AdminModule)},
 ];
 
 @NgModule({

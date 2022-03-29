@@ -1,60 +1,66 @@
-import {Authorized, CurrentUser, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers";
-import {getManager, Repository} from "typeorm";
-import {EntityFromBody, EntityFromParam} from "typeorm-routing-controllers-extensions";
-import {Person} from "../entity/Person";
+import { plainToInstance } from "class-transformer";
+import { Authorized, Body, CurrentUser, Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
+import { EntityManager, getManager, Repository, TransactionManager } from "typeorm";
+import { Person } from "../entity/Person";
 
 @JsonController("/api/person")
 export class PersonController {
-  private personRepository: Repository<Person>;
+  private personRepository: (manager: EntityManager) => Repository<Person>;
 
   constructor() {
-    this.personRepository = getManager().getRepository(Person);
+    this.personRepository = manager => manager.getRepository(Person);
   }
 
   @Authorized("admin")
   @Get("/:id([0-9]+)")
-  public get(@EntityFromParam("id") person: Person) {
-    return person;
+  public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
+    return await this.personRepository(manager).findOne(id);
   }
 
   @Authorized("admin")
   @Get()
-  public getAll() {
-    return this.personRepository.find();
+  public async getAll(@TransactionManager() manager: EntityManager) {
+    return await this.personRepository(manager).find();
   }
 
   @Authorized("admin")
   @Put("/:id([0-9]+)")
-  public update(@EntityFromParam("id") person: Person, @EntityFromBody() newPerson: Person, @CurrentUser({required: true}) userId: number) {
-    return this.personRepository.save(this.personRepository.merge(person, newPerson), {data: userId});
+  public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newPersonFromBody: Person, @CurrentUser({ required: true }) userId: number) {
+    const person = await this.get(manager, id);
+    const newPerson = plainToInstance(Person, newPersonFromBody);
+    return await this.personRepository(manager).save(this.personRepository(manager).merge(person, newPerson), { data: userId });
   }
 
   @Authorized("admin")
   @Delete("/:id([0-9]+)")
-  public delete(@EntityFromParam("id") person: Person, @CurrentUser({required: true}) userId: number) {
-    return this.personRepository.remove(person, {data: userId});
+  public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number, @CurrentUser({ required: true }) userId: number) {
+    const person = new Person();
+    person.id = id;
+    return await this.personRepository(manager).remove(person, { data: userId });
   }
 
   @Authorized(["admin", "standard"])
   @Get("/withAll/:id([0-9]+)")
-  public getWithAll(@Param("id") id: number, @CurrentUser({required: true}) userId: number) {
-    return this.personRepository.findOne(id, {relations: ["subgroup", "subgroup.group"]});
+  public async getWithAll(@TransactionManager() manager: EntityManager, @Param("id") id: number, @CurrentUser({ required: true }) userId: number) {
+    return await this.personRepository(manager).findOne(id, { relations: ["subgroup", "subgroup.group"] });
   }
 
   @Authorized()
   @Get("/withAll")
-  public getAllWithAll() {
-    return this.personRepository.find({relations: ["subgroup", "subgroup.group"]});
+  public async getAllWithAll(@TransactionManager() manager: EntityManager) {
+    return await this.personRepository(manager).find({ relations: ["subgroup", "subgroup.group"] });
   }
 
   @Post("/withAll")
-  public saveWithAll(@EntityFromBody() person: Person) {
-    return this.personRepository.insert(person);
+  public async saveWithAll(@TransactionManager() manager: EntityManager, @Body() person: Person) {
+    return await this.personRepository(manager).insert(person);
   }
 
   @Authorized(["admin", "standard"])
   @Put("/withAll/:id([0-9]+)")
-  public updateWithAll(@EntityFromParam("id") person: Person, @EntityFromBody() newPerson: Person, @CurrentUser({required: true}) userId: number) {
-    return this.personRepository.save(this.personRepository.merge(person, newPerson), {data: userId});
+  public async updateWithAll(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newPersonFromBody: Person, @CurrentUser({ required: true }) userId: number) {
+    const person = await this.get(manager, id);
+    const newPerson = plainToInstance(Person, newPersonFromBody);
+    return await this.personRepository(manager).save(this.personRepository(manager).merge(person, newPerson), { data: userId });
   }
 }

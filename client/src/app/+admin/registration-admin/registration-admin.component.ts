@@ -1,7 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {saveAs} from 'file-saver';
+import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject} from 'rxjs';
 import {IPerson} from '../../entities/person';
 import {PersonRestService} from '../../servies/rest/person-rest.service';

@@ -1,39 +1,44 @@
-import {Authorized, Delete, Get, JsonController, Post, Put} from "routing-controllers";
-import {getManager, Repository} from "typeorm";
-import {EntityFromBody, EntityFromParam} from "typeorm-routing-controllers-extensions";
+import { plainToInstance } from "class-transformer";
+import {Authorized, Body, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers";
+import {EntityManager, getManager, Repository, TransactionManager} from "typeorm";
 import {Subgroup} from "../entity/Subgroup";
 
 @Authorized("admin")
 @JsonController("/api/subgroup")
 export class SubgroupController {
-  private subgroupRepository: Repository<Subgroup>;
+
+  private subgroupRepository: (manager: EntityManager) => Repository<Subgroup>;
 
   constructor() {
-    this.subgroupRepository = getManager().getRepository(Subgroup);
+    this.subgroupRepository = manager => manager.getRepository(Subgroup);
   }
 
   @Get("/:id([0-9]+)")
-  public get(@EntityFromParam("id") subgroup: Subgroup) {
-    return subgroup;
+  public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
+    return await this.subgroupRepository(manager).findOne(id);
   }
 
   @Get()
-  public getAll() {
-    return this.subgroupRepository.find();
+  public async getAll(@TransactionManager() manager: EntityManager) {
+    return await this.subgroupRepository(manager).find();
   }
 
   @Put("/:id([0-9]+)")
-  public update(@EntityFromParam("id") subgroup: Subgroup, @EntityFromBody() newSubgroup: Subgroup) {
-    return this.subgroupRepository.save(this.subgroupRepository.merge(subgroup, newSubgroup));
+  public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newSubgroupFromBody: Subgroup) {
+    const subgroup = await this.get(manager, id);
+    const newSubgroup = plainToInstance(Subgroup, newSubgroupFromBody);
+    return await this.subgroupRepository(manager).save(this.subgroupRepository(manager).merge(subgroup, newSubgroup));
   }
 
   @Post()
-  public save(@EntityFromBody() subgroup: Subgroup) {
-    return this.subgroupRepository.save(subgroup);
+  public async save(@TransactionManager() manager: EntityManager, @Body() subgroup: Subgroup) {
+    return await this.subgroupRepository(manager).save(subgroup);
   }
 
   @Delete("/:id([0-9]+)")
-  public delete(@EntityFromParam("id") subgroup: Subgroup) {
-    return this.subgroupRepository.remove(subgroup);
+  public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
+    const subgroup = new Subgroup();
+    subgroup.id = id;
+    return await this.subgroupRepository(manager).remove(subgroup);
   }
 }

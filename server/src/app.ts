@@ -3,26 +3,26 @@ import * as express from "express";
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
-import {verify, VerifyErrors} from "jsonwebtoken";
-import {configure, getLogger, Logger} from "log4js";
+import { verify, VerifyErrors } from "jsonwebtoken";
+import { configure, getLogger, Logger } from "log4js";
 import * as path from "path";
 import "reflect-metadata";
-import {Action, useExpressServer} from "routing-controllers";
-import {Container} from "typedi";
-import {createConnection, getManager, useContainer} from "typeorm";
-import {GroupController} from "./controller/GroupController";
-import {PersonController} from "./controller/PersonController";
-import {RoleController} from "./controller/RoleController";
-import {SecurityController} from "./controller/SecurityController";
-import {SubgroupController} from "./controller/SubgroupController";
-import {UserController} from "./controller/UserController";
-import {User} from "./entity/User";
-import {CustomErrorHandler} from "./utils/CustomErrorHandler";
+import { Action, useExpressServer } from "routing-controllers";
+import { Container } from "typeorm-typedi-extensions";
+import { createConnection, getManager, useContainer } from "typeorm";
+import { GroupController } from "./controller/GroupController";
+import { PersonController } from "./controller/PersonController";
+import { RoleController } from "./controller/RoleController";
+import { SecurityController } from "./controller/SecurityController";
+import { SubgroupController } from "./controller/SubgroupController";
+import { UserController } from "./controller/UserController";
+import { User } from "./entity/User";
+import { CustomErrorHandler } from "./utils/CustomErrorHandler";
 
-import {JwtConfiguration} from "./utils/JwtConfiguration";
-import {ResetTokenEvictor} from "./utils/ResetTokenEvictor";
-import {StartupNotifier} from "./utils/StartupNotifier";
-import {SuppressNextMiddlewareHandler} from "./utils/SuppressNextMiddlewareHandler";
+import { JwtConfiguration } from "./utils/JwtConfiguration";
+import { ResetTokenEvictor } from "./utils/ResetTokenEvictor";
+import { StartupNotifier } from "./utils/StartupNotifier";
+import { SuppressNextMiddlewareHandler } from "./utils/SuppressNextMiddlewareHandler";
 
 const LOGGER: Logger = getLogger("Server");
 
@@ -49,15 +49,15 @@ class Server {
   constructor() {
 
     configure({
-      appenders: {out: {type: "stdout"}},
-      categories: {default: {appenders: ["out"], level: "info"}},
+      appenders: { out: { type: "stdout" } },
+      categories: { default: { appenders: ["out"], level: "info" } },
     });
     this.app = express();
     this.app.use(compression());
     this.config();
     useContainer(Container);
     createConnection().then(async connection => {
-      new ResetTokenEvictor().schedule(0);
+     new ResetTokenEvictor().schedule(0);
       new StartupNotifier().notify("david.leuenberger@gmx.ch");
       this.routes();
       this.staticRoutes();
@@ -152,7 +152,7 @@ class Server {
     const staticRoutePath = __dirname + "/client";
     if (fs.existsSync(staticRoutePath)) {
       LOGGER.info(`Static-Route: serve files from "/client" in "/"`);
-      this.app.use(express.static(__dirname + "/client", {redirect: true}));
+      this.app.use(express.static(__dirname + "/client", { redirect: true }));
     }
   }
 

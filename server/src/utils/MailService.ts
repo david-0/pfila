@@ -22,6 +22,9 @@ export class MailService {
   }
 
   public async sendMail(to: string, subject: string, text: string, html: string): Promise<SentMessageInfo> {
+    if (this.host === undefined) {
+      return;
+    }
     const transporter = nodemailer.createTransport({
       host: this.host,
       port: this.port,

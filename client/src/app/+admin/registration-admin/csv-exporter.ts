@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {saveAs} from 'file-saver';
-import * as moment from 'moment';
-import {utils, WorkBook, WorkSheet, write} from 'xlsx';
-import {IPerson} from '../../entities/person';
-import {GroupWithSubgroupsRestService} from '../../servies/rest/group-with-subgroups-rest.service';
-import {Field} from './export-model/field';
-import {Filter} from './export-model/filter';
-import {SummaryEntry} from './export-model/summary-entry';
+import { Injectable } from '@angular/core';
+import { saveAs } from 'file-saver';
+import { DateTime } from 'luxon';
+import { utils, WorkBook, WorkSheet, write } from 'xlsx';
+import { IPerson } from '../../entities/person';
+import { GroupWithSubgroupsRestService } from '../../servies/rest/group-with-subgroups-rest.service';
+import { Field } from './export-model/field';
+import { Filter } from './export-model/filter';
+import { SummaryEntry } from './export-model/summary-entry';
 
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
@@ -17,7 +17,7 @@ export class CsvExporter {
   private readonly fields: Field[] = [];
 
   constructor(private groupRestService: GroupWithSubgroupsRestService) {
-    this.fields.push(new Field('Anmeldedatum', (p: IPerson) => moment(p.createDate).format('YYYY-MM-DD HH:mm:ss')));
+    this.fields.push(new Field('Anmeldedatum', (p: IPerson) => DateTime.fromJSDate(p.createDate).toFormat('YYYY-MM-DD HH:mm:ss')));
     this.fields.push(new Field('Vorname', (p: IPerson) => p.firstname));
     this.fields.push(new Field('Nachname', (p: IPerson) => p.lastname));
     this.fields.push(new Field('Strasse', (p: IPerson) => p.street));
@@ -73,7 +73,7 @@ export class CsvExporter {
   public async exportAsExcelFile(persons: IPerson[], excelFileName: string): Promise<void> {
     const summaries: SummaryEntry[] = [];
     const summarySheetName = 'Zusammenfassung';
-    const workbook: WorkBook = {Sheets: {}, SheetNames: [summarySheetName]};
+    const workbook: WorkBook = { Sheets: {}, SheetNames: [summarySheetName] };
     summaries.push(...this.addSheet(persons, workbook, 'alle', [new Filter('alle', (p) => true)]));
     const groups = await this.groupRestService.getAll().toPromise();
     for (const group of groups) {
@@ -87,13 +87,13 @@ export class CsvExporter {
       summaries.push(...this.addSheet(persons, workbook, group.name, filters));
     }
     workbook.Sheets[summarySheetName] = utils.json_to_sheet(summaries);
-    const excelBuffer: any = write(workbook, {bookType: 'xlsx', type: 'array'});
+    const excelBuffer: any = write(workbook, { bookType: 'xlsx', type: 'array' });
     return this.saveAsExcelFile(excelBuffer, excelFileName);
   }
 
   private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], {type: EXCEL_TYPE});
-    const date = moment(new Date()).format('YYYY-MM-DD HHmmss');
+    const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
+    const date = new DateTime().toFormat('YYYY-MM-DD HHmmss');
     saveAs(data, fileName + '_' + date + EXCEL_EXTENSION);
   }
 }

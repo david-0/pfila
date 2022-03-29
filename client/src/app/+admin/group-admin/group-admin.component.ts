@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {IGroup} from '../../entities/group';

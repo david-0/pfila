@@ -1,16 +1,15 @@
-import {HttpClient} from '@angular/common/http';
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-import {Role} from '../../entities/role';
-import {IUser} from '../../entities/user';
-import {RolesRestService} from '../../servies/rest/role-rest.service';
-import {UserWithRolesAndAuditRestService} from '../../servies/rest/user-with-roles-and-audit-rest.service';
-import {UserWithRolesRestService} from '../../servies/rest/user-with-roles-rest.service';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {AuthenticationService} from '../services/auth/authentication.service';
-import {RolePair} from './RolePair';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { Role } from '../../entities/role';
+import { IUser } from '../../entities/user';
+import { RolesRestService } from '../../servies/rest/role-rest.service';
+import { UserWithRolesAndAuditRestService } from '../../servies/rest/user-with-roles-and-audit-rest.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { AuthenticationService } from '../services/auth/authentication.service';
+import { RolePair } from './RolePair';
 
 @Component({
   selector: 'app-user-admin',
@@ -23,16 +22,16 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   public rolePairs: RolePair[] = [];
   public userDialog: boolean;
   public edit: boolean;
-  private user: IUser = {firstname: '', lastname: '', email: '', password: '', notification: false, roles: []};
+  private user: IUser = { firstname: '', lastname: '', email: '', password: '', notification: false, roles: [] };
   private detailHeader: string;
 
   constructor(private http: HttpClient,
-              private authenticationService: AuthenticationService,
-              public dialog: MatDialog,
-              public userRestService: UserWithRolesAndAuditRestService,
-              public roleRestService: RolesRestService,
-              private router: Router,
-              private route: ActivatedRoute) {
+    private authenticationService: AuthenticationService,
+    public dialog: MatDialog,
+    public userRestService: UserWithRolesAndAuditRestService,
+    public roleRestService: RolesRestService,
+    private router: Router,
+    private route: ActivatedRoute) {
   }
 
   openDialog(id: number, firstname: string, lastname: string) {
@@ -76,7 +75,7 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   }
 
   private createRolePairs(rolesAvailable: Role[], userRoles: Role[]): RolePair[] {
-    return rolesAvailable.map(r => ({role: r, checked: this.containsRole(userRoles, r)}));
+    return rolesAvailable.map(r => ({ role: r, checked: this.containsRole(userRoles, r) }));
   }
 
   private containsRole(roles: Role[], roleToFind: Role): boolean {
@@ -108,7 +107,7 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   }
 
   public showDetails(user: IUser) {
-    this.router.navigate([`detail/${user.id}`], {relativeTo: this.route});
+    this.router.navigate([`detail/${user.id}`], { relativeTo: this.route });
   }
 
   private createUser() {
