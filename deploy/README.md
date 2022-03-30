@@ -57,14 +57,14 @@ certbot certonly --standalone
 
 ## config node-server
 cd /home/alixon/usr/davidl/website/pfila/certificate/ssl
-ln -s /etc/letsencrypt/live/shop.el-refugio-denia.com/cert.pem
-ln -s /etc/letsencrypt/live/shop.el-refugio-denia.com/privkey.pem
-ln -s /etc/letsencrypt/live/shop.el-refugio-denia.com/chain.pem
+ln -s /etc/letsencrypt/live/xn--usgwehlt-und-krnt-e0ba.ch/cert.pem
+ln -s /etc/letsencrypt/live/xn--usgwehlt-und-krnt-e0ba.ch/privkey.pem
+ln -s /etc/letsencrypt/live/xn--usgwehlt-und-krnt-e0ba.ch/chain.pem
 
 ## chmod permissions 
 setfacl -m u:davidl:rx /etc/letsencrypt/archive
 setfacl -m u:davidl:rx /etc/letsencrypt/live
-setfacl -m u:davidl:r /etc/letsencrypt/archive/shop.el-refugio-denia.com/privkey1.pem
+setfacl -m u:davidl:r /etc/letsencrypt/archive/xn--usgwehlt-und-krnt-e0ba.ch/privkey1.pem
 
 ## pre and post hooks for renew certificate
 During the renewal of the certificate the port 80 is needed. So there must be a script, that stops the node server and an otherone which starts him again.
@@ -78,6 +78,17 @@ cat > /etc/letsencrypt/renewal-hooks/post/startPfilaServer.sh << EOF
 systemctl start pfila-prod
 EOF
 chmod 700 /etc/letsencrypt/renewal-hooks/post/startPfilaServer.sh
+
+--> renamed to stopNodeServer.sh and startNodeServer.sh
+
+## Change node instance (domain)
+edit stopNodeServer.sh and startNodeServer.sh and change service
+disable old-service 
+enable new-service
+
+systemctl enable / disable 
+check with systemctl is-enabled
+
 
 
 

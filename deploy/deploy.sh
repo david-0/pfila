@@ -20,10 +20,10 @@ updateDbSettings() {
 	fi;
 }
 
-if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-prod/pfila-deploy" ]] ; then
+if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-prod/pfila/deploy" ]] ; then
 	systemdServiceName=pfila-prod;
 fi;
-if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-int/pfila-deploy" ]] ; then
+if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-int/pfila/deploy" ]] ; then
 	systemdServiceName=pfila-int;
 fi;
 if [[ "$1" = "--full" ]] || [[ "$2" = "--full" ]] ; then
