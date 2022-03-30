@@ -1,0 +1,16 @@
+[Unit]
+Description=Pfila Server service
+After=node-set-cab.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=davidl
+Environment=NODE_ENV=production
+WorkingDirectory=/home/alixon/usr/davidl/website/pfila-prod/pfila-run
+ExecStart=/usr/bin/node dist/app.js
+
+[Install]
+WantedBy=multi-user.target
