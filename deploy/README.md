@@ -18,9 +18,8 @@ register user with the frontend
 sudo -u postgres -i
 psql pfila | pfila-int
 insert into role (id,name) values ('1','admin');
-insert into role (id,name) values ('2','sale');
+insert into role (id,name) values ('2','standard');
 insert into role (id,name) values ('3','guest');
-insert into role (id,name) values ('4','store');
 insert into user_roles_role ("userId", "roleId") values ('1', '1');
 
 # configure systemd
