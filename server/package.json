@@ -4,7 +4,9 @@
   "description": "serverpart",
   "main": "index.js",
   "scripts": {
-    "serve": "nodemon src/app.ts"
+    "serve": "nodemon src/app.ts",
+    "build": "tsc",
+    "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f ./ormconfig.json"
   },
   "author": "",
   "license": "MIT",
