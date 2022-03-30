@@ -8,7 +8,7 @@ cd ${s%/*}
 . ./common.sh
 
 exec ssh $server << EOF
-	~/website/pfila-int/pfila/deploy/prepare-for-client-upload.sh
+	~/website/pfila-int/deploy/deploy/prepare-for-client-upload.sh
 EOF
 if [[ "$1" = "--full" ]] || [[ "$2" = "--full" ]] ; then
 	level="--full"
@@ -29,5 +29,5 @@ else
 fi;
 exec scp -r pfila/client/dist $server:~/website/pfila-int/prebuilt-client
 exec ssh $server << EOF
-	~/website/pfila-int/pfila/deploy/deploy.sh $level --use-prebuilt-client
+	~/website/pfila-int/deploy/deploy/deploy.sh $level --use-prebuilt-client
 EOF
