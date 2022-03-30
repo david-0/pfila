@@ -1,5 +1,5 @@
 import {Authorized, Get, JsonController} from "routing-controllers";
-import {EntityManager, getManager, Repository, TransactionManager} from "typeorm";
+import {EntityManager, getManager, Repository, Transaction, TransactionManager} from "typeorm";
 import {UserAudit} from "../entity/UserAudit";
 
 @Authorized("admin")
@@ -12,6 +12,7 @@ export class UserAuditController {
     this.userAuditRepository = manager => manager.getRepository(UserAudit);
   }
 
+  @Transaction()
   @Get()
   public async getAll(@TransactionManager() manager: EntityManager) {
     return await this.userAuditRepository(manager).find();
