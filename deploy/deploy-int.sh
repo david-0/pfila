@@ -19,10 +19,11 @@ if [[ "$1" = "--full" ]] || [[ "$2" = "--full" ]] ; then
 	exec npm run build-prod
 	exec cd ../..
 else
-	exec cd pfila/client
+	exec cd pfila
 	exec git reset --hard
 	exec git clean -fd
 	exec git pull
+	exec cd client
 	exec npm run build-prod
 	exec cd ../..
 fi;
