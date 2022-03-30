@@ -9,7 +9,7 @@ Restart=always
 RestartSec=1
 User=davidl
 Environment=NODE_ENV=production
-WorkingDirectory=/home/alixon/usr/davidl/website/pfila-prod/pfila-run
+WorkingDirectory=/home/alixon/usr/davidl/website/pfila-prod/run/server
 ExecStart=/usr/bin/node dist/app.js
 
 [Install]

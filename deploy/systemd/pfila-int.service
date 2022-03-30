@@ -9,7 +9,7 @@ Restart=always
 RestartSec=1
 User=davidl
 Environment=NODE_ENV=production PORT_HTTP=5001 PORT=5002
-WorkingDirectory=/home/alixon/usr/davidl/website/pfila-int/pfila-run
+WorkingDirectory=/home/alixon/usr/davidl/website/pfila-int/run/server
 ExecStart=/usr/bin/node dist/app.js
 
 [Install]

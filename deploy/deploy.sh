@@ -20,10 +20,10 @@ updateDbSettings() {
 	fi;
 }
 
-if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-prod/pfila/deploy" ]] ; then
+if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-prod/deploy/deploy" ]] ; then
 	systemdServiceName=pfila-prod;
 fi;
-if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-int/pfila/deploy" ]] ; then
+if [[ "$(pwd)" = "/home/alixon/usr/davidl/website/pfila-int/deploy/deploy" ]] ; then
 	systemdServiceName=pfila-int;
 fi;
 if [[ "$1" = "--full" ]] || [[ "$2" = "--full" ]] ; then
@@ -38,11 +38,11 @@ if [[ "$systemdServiceName" = "" ]]; then
 	exit 1
 fi;
 export NG_CLI_ANALYTICS=false
-cd ..
+cd ../..
 if [[ "$level" = "full" ]] || [[ ! -d "pfila-client" ]] ; then
-	exec rm -rf pfila
-	exec git clone https://github.com/david-0/pfila.git
-	exec cd pfila/server
+	exec rm -rf server
+	exec git clone https://github.com/david-0/pfila.git server
+	exec cd server/server
 	updateDbSettings ${systemdServiceName}
 	exec npm install
 	exec npm run build
@@ -61,12 +61,12 @@ if [[ "$level" = "full" ]] || [[ ! -d "pfila-client" ]] ; then
 	exec cd ..
 	
 	exec sudo systemctl stop ${systemdServiceName}
-	exec rm -rf pfila-run
-	exec mv pfila-server pfila-run
+	exec rm -rf run
+	exec mv server run
 	exec sudo systemctl start ${systemdServiceName}
 else 
 	exec sudo systemctl stop ${systemdServiceName}
-	exec cd pfila-run
+	exec cd run
 	exec git reset --hard
 	exec git clean -fd
 	exec git pull
@@ -77,7 +77,7 @@ else
 	exec cd ..
 	
 	if [[ "${usePrebuiltClient}" = "yes" ]]; then
-		exec rm -rf pfila/server/dist/client
+		exec rm -rf server/dist/client
 		exec mv ../prebuilt-client server/dist/client
 	else
 		exec cd client
