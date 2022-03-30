@@ -46,10 +46,10 @@ cd website
 ### domain certificates
 mkdir certificate/ssl
 cd certificate/ssl
-ln -s /etc/apache2/ssl/uf-und-drvoo.ch.key uf-und-drvoo.key
-ln -s /etc/apache2/ssl/uf-und-drvoo.ch.crt uf-und-drvoo.crt
-ln -s uf-und-drvoo.key privkey.pem
-ln -s uf-und-drvoo.crt cert.pem
+ln -s /etc/apache2/ssl/usgwehlt-und-kröönt.ch.key usgwehlt-und-kröönt.key
+ln -s /etc/apache2/ssl/usgwehlt-und-kröönt.ch.crt usgwehlt-und-kröönt.crt
+ln -s usgwehlt-und-kröönt.key privkey.pem
+ln -s usgwehlt-und-kröönt.crt cert.pem
 
 ### intermediate certificate
 https://letsencrypt.org/certificates/

@@ -231,7 +231,7 @@ export class SecurityController {
   private async sendResetToken(user: User, token: string) {
     let domain = "http://localhost:4200/";
     if (this.env === "production") {
-      domain = "https://uf-und-drvoo.ch";
+      domain = "https://usgwehlt-und-kröönt.ch";
     }
     const link = `${domain}/admin/resetPassword/${token}`;
     this.LOGGER.info(`resetLink:${link}`);

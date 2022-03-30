@@ -57,8 +57,8 @@ class Server {
     this.config();
     useContainer(Container);
     createConnection().then(async connection => {
-     new ResetTokenEvictor().schedule(0);
-      new StartupNotifier().notify("david.leuenberger@gmx.ch");
+      new ResetTokenEvictor().schedule(0);
+
       this.routes();
       this.staticRoutes();
       this.defaultRoute();
@@ -66,6 +66,7 @@ class Server {
 
       // Start listening
       this.listen();
+      new StartupNotifier().notify("david.leuenberger@gmx.ch", this.env + ":" + this.port);
     }).catch(err => {
       LOGGER.error("Create Connection error: {}", err);
     });
@@ -108,7 +109,7 @@ class Server {
   }
 
   private redirectToHttps(req: express.Request, res: express.Response, next: express.NextFunction) {
-    res.redirect("https://uf-und-drvoo.ch" + req.url);
+    res.redirect("https://usgwehlt-und-kröönt.ch" + req.url);
   }
 
   private config(): void {
