@@ -45,12 +45,11 @@ if [[ "$level" = "full" ]] || [[ ! -d "pfila-client" ]] ; then
 	exec cd server/server
 	updateDbSettings ${systemdServiceName}
 	exec npm install
-	exec npm run build
 	exec cd ..
 
 	if [[ "${usePrebuiltClient}" = "yes" ]]; then
-		exec rm -rf server/dist/client
-		exec mv ../prebuilt-client server/dist/client
+		exec rm -rf server/src/client
+		exec mv ../prebuilt-client server/src/client
 	else
 		exec cd client
 		exec npm install
@@ -73,12 +72,11 @@ else
 	exec cd server
 	updateDbSettings ${systemdServiceName}
 	exec rm -rf dist
-	exec npm run build
 	exec cd ..
 	
 	if [[ "${usePrebuiltClient}" = "yes" ]]; then
-		exec rm -rf server/dist/client
-		exec mv ../prebuilt-client server/dist/client
+		exec rm -rf server/src/client
+		exec mv ../prebuilt-client server/src/client
 	else
 		exec cd client
 		exec npm run build-prod

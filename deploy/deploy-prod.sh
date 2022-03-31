@@ -8,7 +8,7 @@ cd ${s%/*}
 . ./common.sh
 
 exec ssh $server << EOF
-	~/website/pfila-prod/pfila-deploy/prepare-for-client-upload.sh
+	~/website/pfila-prod/deploy/deploy/prepare-for-client-upload.sh
 EOF
 if [[ "$1" = "--full" ]] || [[ "$2" = "--full" ]] ; then
 	level="--full"
@@ -27,7 +27,7 @@ else
 	exec npm run build-prod
 	exec cd ../..
 fi;
-exec scp -r pfila/client/dist $server:~/website/pfila-prod/prebuilt-client
+exec scp -r pfila/client/dist/client/ $server:~/website/pfila-prod/prebuilt-client/
 exec ssh $server << EOF
-	~/website/pfila-prod/pfila/deploy/deploy.sh $level --use-prebuilt-client
+	~/website/pfila-prod/deploy/deploy/deploy.sh $level --use-prebuilt-client
 EOF

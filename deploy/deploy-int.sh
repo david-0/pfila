@@ -27,7 +27,7 @@ else
 	exec npm run build-prod
 	exec cd ../..
 fi;
-exec scp -r pfila/client/dist $server:~/website/pfila-int/prebuilt-client
+exec scp -r pfila/client/dist/client/ $server:~/website/pfila-int/prebuilt-client/
 exec ssh $server << EOF
 	~/website/pfila-int/deploy/deploy/deploy.sh $level --use-prebuilt-client
 EOF
