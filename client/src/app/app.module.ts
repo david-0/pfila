@@ -17,6 +17,7 @@ import { InfoComponent } from './info/info.component';
 import { RestUrlPrefixService } from './servies/rest-url-prefix.service';
 import { WINDOW_PROVIDERS } from './servies/window-provider';
 import { TeamComponent } from './team/team.component';
+import { NotifierComponent } from './+admin/util/notifier/notifier.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { TeamComponent } from './team/team.component';
     InfoComponent,
     TeamComponent,
     HomeComponent,
-    DebugPipe,
+    DebugPipe
   ],
   imports: [
     AppRoutingModule,

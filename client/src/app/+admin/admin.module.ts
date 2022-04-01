@@ -16,6 +16,7 @@ import { ValidatorsModule } from 'ngx-validators';
 import { ENV_PROVIDERS } from 'src/environments/environment';
 import { RegistrationModule } from '../+registration/registration.module';
 import { MySpinnerModule } from '../my-spinner/my-spinner.module';
+import { NotifierComponent } from './util/notifier/notifier.component';
 import { RestUrlPrefixService } from '../servies/rest-url-prefix.service';
 import { GroupRestService } from '../servies/rest/group-rest.service';
 import { GroupWithSubgroupsRestService } from '../servies/rest/group-with-subgroups-rest.service';
@@ -46,6 +47,8 @@ import { ErrorInterceptor } from './services/auth/error.interceptor';
 import { JwtInterceptor } from './services/auth/jwt.interceptor';
 import { UserAdminComponent } from './user-admin/user-admin.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { NotifierService } from './services/notifier.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 registerLocaleData(localeCh);
 
@@ -69,6 +72,7 @@ const config: SocketIoConfig = { url: host, options: {} };
     MatCardModule,
     MatCheckboxModule,
     ValidatorsModule,
+    MatSnackBarModule,
     SocketIoModule.forRoot(config),
   ],
   declarations: [
@@ -87,6 +91,7 @@ const config: SocketIoConfig = { url: host, options: {} };
     ResetMailComponent,
     ResetMailConfirmationComponent,
     UserDetailComponent,
+    NotifierComponent,
   ],
   providers: [
     AuthenticationService,
@@ -100,6 +105,7 @@ const config: SocketIoConfig = { url: host, options: {} };
     UserWithRolesAndAuditRestService,
     RestUrlPrefixService,
     CsvExporter,
+    NotifierService,
     ENV_PROVIDERS,
     { provide: LOCALE_ID, useValue: 'de_ch' },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

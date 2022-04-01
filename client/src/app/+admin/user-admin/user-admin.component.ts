@@ -9,6 +9,7 @@ import { RolesRestService } from '../../servies/rest/role-rest.service';
 import { UserWithRolesAndAuditRestService } from '../../servies/rest/user-with-roles-and-audit-rest.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { AuthenticationService } from '../services/auth/authentication.service';
+import { NotifierService } from '../services/notifier.service';
 import { RolePair } from './RolePair';
 
 @Component({
@@ -31,7 +32,8 @@ export class UserAdminComponent implements OnInit, OnDestroy {
     public userRestService: UserWithRolesAndAuditRestService,
     public roleRestService: RolesRestService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private notifier: NotifierService) {
   }
 
   openDialog(id: number, firstname: string, lastname: string) {
@@ -39,8 +41,12 @@ export class UserAdminComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.message = `${firstname} ${lastname} löschen? `;
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'Ja') {
-        this.userRestService.del(id).subscribe(ok => {
-          this.updateUsers();
+        this.userRestService.del(id).subscribe({
+          next: ok => {
+            this.updateUsers();
+            this.notifier.showNotification("Benutzer '" + firstname + " " + lastname + "' wurde gelöscht!", "Schliessen", "success");
+          },
+          error: error => this.notifier.showNotification("Benutzer '" + firstname + " " + lastname + "' konnte nicht gelöscht werden. Error: " + error, "Schliessen", "error")
         });
       }
     });
@@ -87,8 +93,9 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   }
 
   private updateUsers() {
-    this.userRestService.getAll().subscribe(users => {
-      this.userWithRoles.next(users);
+    this.userRestService.getAll().subscribe({
+      next: users => this.userWithRoles.next(users),
+      error: error => this.notifier.showNotification("Es konnten nicht alle Bentzer geladen werden. Error: " + error, "Schliessen", "error")
     });
   }
 
@@ -111,6 +118,7 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   }
 
   private createUser() {
+    this.user = { firstname: '', lastname: '', email: '', password: '', notification: false, roles: [] };
     this.roleRestService.getRole('guest').subscribe(role => {
       const current = this.user;
       current.roles = [role];
@@ -135,8 +143,12 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   }
 
   private updateUser(user: IUser) {
-    this.userRestService.update(user).subscribe(ok => {
-      this.updateUsers();
+    this.userRestService.update(user).subscribe({
+      next: ok => {
+        this.updateUsers();
+        this.notifier.showNotification("Benutzer '" + user.firstname + " " + user.lastname + "' wurde aktialisiert!", "Schliessen", "success");
+      },
+      error: error => this.notifier.showNotification("Benutzer '" + user.firstname + " " + user.lastname + "' konnte nicht aktualisiert werden. Error: " + error, "Schliessen", "error")
     });
     this.user = null;
     this.userDialog = false;
@@ -144,8 +156,12 @@ export class UserAdminComponent implements OnInit, OnDestroy {
   }
 
   private addUser(user: IUser) {
-    this.userRestService.add(user).subscribe(u => {
-      this.updateUsers();
+    this.userRestService.add(user).subscribe({
+      next: ok => {
+        this.updateUsers();
+        this.notifier.showNotification("Benutzer '" + user.firstname + " " + user.lastname + "' wurde hinzugefügt!", "Schliessen", "success");
+      },
+      error: error => this.notifier.showNotification("Benutzer konnte nicht hizugefügt werden. Error: " + error, "Schliessen", "error")
     });
     this.userDialog = false;
     this.edit = false;

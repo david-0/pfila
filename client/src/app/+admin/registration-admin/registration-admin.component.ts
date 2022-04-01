@@ -1,13 +1,14 @@
-import {HttpClient} from '@angular/common/http';
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject} from 'rxjs';
-import {IPerson} from '../../entities/person';
-import {PersonRestService} from '../../servies/rest/person-rest.service';
-import {PersonWithAllRestService} from '../../servies/rest/person-with-all-rest.service';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {AuthenticationService} from '../services/auth/authentication.service';
-import {CsvExporter} from './csv-exporter';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject } from 'rxjs';
+import { IPerson } from '../../entities/person';
+import { PersonRestService } from '../../servies/rest/person-rest.service';
+import { PersonWithAllRestService } from '../../servies/rest/person-with-all-rest.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { AuthenticationService } from '../services/auth/authentication.service';
+import { NotifierService } from '../services/notifier.service';
+import { CsvExporter } from './csv-exporter';
 
 @Component({
   selector: 'app-registration-admin',
@@ -19,11 +20,12 @@ export class RegistrationAdminComponent implements OnInit, OnDestroy {
   private persons = new BehaviorSubject<IPerson[]>([]);
 
   constructor(private http: HttpClient,
-              private authenticationService: AuthenticationService,
-              public dialog: MatDialog,
-              private personWithAllRestService: PersonWithAllRestService,
-              private personRestService: PersonRestService,
-              private exporter: CsvExporter) {
+    private authenticationService: AuthenticationService,
+    public dialog: MatDialog,
+    private personWithAllRestService: PersonWithAllRestService,
+    private personRestService: PersonRestService,
+    private exporter: CsvExporter,
+    private notifier: NotifierService) {
   }
 
   openDialog(id: number, firstname: string, lastname: string) {
@@ -31,8 +33,12 @@ export class RegistrationAdminComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.message = `${firstname} ${lastname} löschen? `;
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'Ja') {
-        this.personRestService.del(id).subscribe(ok => {
-          this.updatePersons();
+        this.personRestService.del(id).subscribe({
+          next: ok => {
+            this.updatePersons();
+            this.notifier.showNotification("Anmeldung '" + firstname + " " + lastname + "' wurde gelöscht!", "Schliessen", "success");
+          },
+          error: error => this.notifier.showNotification("Anmeldung '" + + firstname + " " + lastname + "' konnte nicht gelöscht werden!. Error: " + error, "Schliessen", "error")
         });
       }
     });
@@ -43,13 +49,16 @@ export class RegistrationAdminComponent implements OnInit, OnDestroy {
   }
 
   private updatePersons() {
-    this.personWithAllRestService.getAll().subscribe(list => {
-      this.persons.next(list.sort((a, b) => this.compare(a, b)));
+    this.personWithAllRestService.getAll().subscribe({
+      next: list => this.persons.next(list.sort((a, b) => this.compare(a, b))),
+      error: error => this.notifier.showNotification("Es konnten nicht alle Anmeldungen geladen werden!. Error: " + error, "Schliessen", "error")
     });
   }
 
   private saveFile() {
-    this.exporter.exportAsExcelFile(this.persons.getValue(), 'report');
+    this.exporter.exportAsExcelFile(this.persons.getValue(), 'report') //
+      .then(n => this.notifier.showNotification("Export erfolgreich!", "Schliessen", "success")) //
+      .catch(reason => this.notifier.showNotification("Datei konnte nicht gespeichert werden!", "Schliessen", "error"));
   }
 
   ngOnDestroy() {

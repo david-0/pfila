@@ -67,3 +67,13 @@ h2 {
 .h3--left-right-margins {
   margin: 0 0.5em 0 0.5em;
 }
+
+.error.mat-snack-bar-container{
+  background: #cc0000;
+  color: white;
+}
+
+.success.mat-snack-bar-container{
+  background: #00cc00;
+  color: white;
+}

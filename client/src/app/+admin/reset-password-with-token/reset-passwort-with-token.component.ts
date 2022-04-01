@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AuthenticationService} from '../services/auth/authentication.service';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from '../services/auth/authentication.service';
+import { NotifierService } from '../services/notifier.service';
 
 @Component({
   selector: 'app-password-change',
@@ -8,15 +9,15 @@ import {AuthenticationService} from '../services/auth/authentication.service';
   styleUrls: ['./reset-passwort-with-token.component.scss'],
 })
 export class ResetPasswortWithTokenComponent implements OnInit {
-  public message: string;
   public password: string;
   public confirmPassword: string;
   public busy = false;
   public token: string;
 
   constructor(private authenticationService: AuthenticationService,
-              private router: Router,
-              private route: ActivatedRoute) {
+    private router: Router,
+    private route: ActivatedRoute,
+    private notifyer: NotifierService) {
   }
 
   ngOnInit() {
@@ -33,12 +34,16 @@ export class ResetPasswortWithTokenComponent implements OnInit {
 
   private updatePassword(values: any) {
     this.busy = true;
-    this.authenticationService.resetPasswordWithToken(this.token, values.password).subscribe(done => {
-      this.busy = false;
-      this.message = 'Passwort konnte erfolgreich geändert werden!';
-    }, error => {
-      this.busy = false;
-      this.message = 'Fehler: Passwort konnte nicht geändert werden. Das Token existiert nicht oder ist abgelaufen!' ;
+    this.authenticationService.resetPasswordWithToken(this.token, values.password).subscribe({
+      next: done => {
+        this.busy = false;
+        this.router.navigate([`/admin/login`]);
+        this.notifyer.showNotification('Passwort konnte erfolgreich geändert werden!', 'Schliessen', 'success');
+      },
+      error: error => {
+        this.busy = false;
+        this.notifyer.showNotification('Fehler: Passwort konnte nicht geändert werden. Das Token existiert nicht oder ist abgelaufen!', 'Schliessen', 'success');
+      }
     });
   }
 }

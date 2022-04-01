@@ -2,7 +2,7 @@
   <h3 class="h3__small-margins h3__padding">Passwort ändern</h3>
 </div>
 <div class="admin-container">
-  <form *ngIf="!message" class="form" #f="ngForm" novalidate (ngSubmit)="changePassword(f.value)">
+  <form class="form" #f="ngForm" novalidate (ngSubmit)="changePassword(f.value)">
     <section class="section">
       <mat-form-field class="full-width">
         <input matInput placeholder="neues Passwort" name="password" type="password" #passwordControl="ngModel"
@@ -28,9 +28,5 @@
       <button mat-button type="submit" [disabled]="!f.valid" class="grayButton">Passwort ändern</button>
     </div>
   </form>
-  <div *ngIf="message">
-    <p>{{message}}</p>
-    <p>Weiter zum <a [routerLink]="['/admin/login']">Login</a></p>
-  </div>
   <app-my-spinner [isRunning]="busy" [delay]="150"></app-my-spinner>
 </div>

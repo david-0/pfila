@@ -8,14 +8,6 @@
     </button>
   </div>
   <div class="div--maxwith div--margins">
-    <!--  <div class="table">
-        <mat-select placeholder="Gruppenfilter" name="filter" class="topborder"
-                   (ngModelChange)="updateSubgroup($event)">
-          <mat-option *ngFor="let group of groups" [value]="group">
-            {{group.name }}
-          </mat-option>
-        </mat-select>-->
-
     <div class="line" *ngFor="let person of persons | async">
       <button mat-button *ngIf="authenticationService.isStandard() || authenticationService.isAdmin()"
               class="grayButton" [routerLink]="[ '/admin/dashboard/change-person', person.id ]">
