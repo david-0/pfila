@@ -68,7 +68,9 @@ export class UserController {
 
   @Transaction()
   @Delete("/withRoles/:id([0-9]+)")
-  public async deleteWithRoles(@TransactionManager() manager: EntityManager, @Param("id") user: User) {
+  public async deleteWithRoles(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
+    const user = new User();
+    user.id = id;
     return await this.userRepository(manager).remove(user);
   }
 
@@ -101,7 +103,9 @@ export class UserController {
 
   @Transaction()
   @Delete("/withRolesAndAudit/:id([0-9]+)")
-  public async deleteWithRolesWithAudit(@TransactionManager() manager: EntityManager, @Param("id") user: User) {
+  public async deleteWithRolesWithAudit(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
+    const user = new User();
+    user.id = id;
     return await this.userRepository(manager).remove(user);
   }
 
