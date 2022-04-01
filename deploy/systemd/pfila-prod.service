@@ -10,7 +10,7 @@ RestartSec=1
 User=davidl
 Environment=NODE_ENV=production
 WorkingDirectory=/home/alixon/usr/davidl/website/pfila-prod/run/server
-ExecStart=/usr/bin/npm run start
+ExecStart=/usr/bin/node ./node_modules/.bin/ts-node src/app.ts
 
 [Install]
 WantedBy=multi-user.target
