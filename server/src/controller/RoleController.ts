@@ -27,7 +27,7 @@ export class RoleController {
   @Transaction()
   @Put("/:id([0-9]+)")
   public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newRoleFromBody: Role) {
-    const role = await this.get(manager, id);
+    const role = await this.roleRepository(manager).findOne(id);
     const newRole = plainToInstance(Role, newRoleFromBody);
     return this.roleRepository(manager).save(this.roleRepository(manager).merge(role, newRole));
   }

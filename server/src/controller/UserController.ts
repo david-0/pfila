@@ -61,7 +61,7 @@ export class UserController {
   @Transaction()
   @Put("/withRoles/:id([0-9]+)")
   public async updateWithRoles(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newUserFromBody: User) {
-    const user = await this.get(manager, id);
+    const user = await this.userRepository(manager).findOne(id);
     const newUser = plainToInstance(User, newUserFromBody);
     return await this.userRepository(manager).save(this.userRepository(manager).merge(user, newUser));
   }
@@ -89,7 +89,7 @@ export class UserController {
   @Transaction()
   @Put("/withRolesAndAudit/:id([0-9]+)")
   public async  updateWithRolesAndAudit(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newUserFromBody: User) {
-    const user = await this.get(manager, id);
+    const user = await this.userRepository(manager).findOne(id);
     const newUser = plainToInstance(User, newUserFromBody);
     return await this.userRepository(manager).save(this.userRepository(manager).merge(user, newUser));
   }

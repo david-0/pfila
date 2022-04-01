@@ -29,7 +29,7 @@ export class PersonController {
   @Authorized("admin")
   @Put("/:id([0-9]+)")
   public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newPersonFromBody: Person, @CurrentUser({ required: true }) userId: number) {
-    const person = await this.get(manager, id);
+    const person = await this.personRepository(manager).findOne(id);
     const newPerson = plainToInstance(Person, newPersonFromBody);
     return await this.personRepository(manager).save(this.personRepository(manager).merge(person, newPerson), { data: userId });
   }
@@ -67,7 +67,7 @@ export class PersonController {
   @Authorized(["admin", "standard"])
   @Put("/withAll/:id([0-9]+)")
   public async updateWithAll(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newPersonFromBody: Person, @CurrentUser({ required: true }) userId: number) {
-    const person = await this.get(manager, id);
+    const person = await this.personRepository(manager).findOne(id);
     const newPerson = plainToInstance(Person, newPersonFromBody);
     return await this.personRepository(manager).save(this.personRepository(manager).merge(person, newPerson), { data: userId });
   }

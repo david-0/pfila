@@ -28,14 +28,15 @@ export class SubgroupController {
   @Transaction()
   @Put("/:id([0-9]+)")
   public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newSubgroupFromBody: Subgroup) {
-    const subgroup = await this.get(manager, id);
+    const subgroup = await this.subgroupRepository(manager).findOne(id);
     const newSubgroup = plainToInstance(Subgroup, newSubgroupFromBody);
     return await this.subgroupRepository(manager).save(this.subgroupRepository(manager).merge(subgroup, newSubgroup));
   }
 
   @Transaction()
   @Post()
-  public async save(@TransactionManager() manager: EntityManager, @Body() subgroup: Subgroup) {
+  public async save(@TransactionManager() manager: EntityManager, @Body() newSubgroupFromBody: Subgroup) {
+    const subgroup = plainToInstance(Subgroup, newSubgroupFromBody);
     return await this.subgroupRepository(manager).save(subgroup);
   }
 

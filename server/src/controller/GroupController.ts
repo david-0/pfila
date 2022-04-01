@@ -29,7 +29,7 @@ export class GroupController {
   @Authorized("admin")
   @Put("/:id([0-9]+)")
   public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newGroupFromBody: Group) {
-    const group = await this.get(manager, id);
+    const group = await this.groupRepository(manager).findOne(id);
     const newGroup = plainToInstance(Group, newGroupFromBody);
     return await this.groupRepository(manager).save(this.groupRepository(manager).merge(group, newGroup));
   }
@@ -61,7 +61,8 @@ export class GroupController {
   @Transaction()
   @Get("/withSubgroups")
   public async getAllWithAll(@TransactionManager() manager: EntityManager): Promise<Group[]> {
-    return await this.groupRepository(manager).find({ relations: ["subgroups"] });
+    return await this.
+    groupRepository(manager).find({ relations: ["subgroups"] });
   }
 
   @Transaction()
@@ -80,4 +81,14 @@ export class GroupController {
     group.id = id;
     return await this.groupRepository(manager).remove(group);
   }
+
+  @Transaction()
+  @Authorized("admin")
+  @Put("/withSubgroups/:id([0-9]+)")
+  public async updateWithSubgroups(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newGroupFromBody: Group) {
+    const group = await this.groupRepository(manager).findOne(id);
+    const newGroup = plainToInstance(Group, newGroupFromBody);
+    return await this.groupRepository(manager).save(this.groupRepository(manager).merge(group, newGroup));
+  }
+
 }
