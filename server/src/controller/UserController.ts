@@ -91,4 +91,12 @@ export class UserController {
     const newUser = plainToInstance(User, newUserFromBody);
     return await this.userRepository(manager).save(this.userRepository(manager).merge(user, newUser));
   }
+
+  @Transaction()
+  @Post("/withRolesAndAudit")
+  public async  saveWithRolesAndAudit(@TransactionManager() manager: EntityManager, @Body() userFromBody: User) {
+    const user = plainToInstance(User, userFromBody);
+    return await this.userRepository(manager).save(user);
+  }
+
 }
