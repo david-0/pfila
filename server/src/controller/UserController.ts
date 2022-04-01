@@ -99,4 +99,10 @@ export class UserController {
     return await this.userRepository(manager).save(user);
   }
 
+  @Transaction()
+  @Delete("/withRolesAndAudit/:id([0-9]+)")
+  public async deleteWithRolesWithAudit(@TransactionManager() manager: EntityManager, @Param("id") user: User) {
+    return await this.userRepository(manager).remove(user);
+  }
+
 }
