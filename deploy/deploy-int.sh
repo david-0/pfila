@@ -16,7 +16,7 @@ if [[ "$1" = "--full" ]] || [[ "$2" = "--full" ]] ; then
 	exec git clone https://github.com/david-0/pfila.git
 	exec cd pfila/client
 	exec npm install
-	exec npm run build-prod
+	exec npm run build-prod-debug
 	exec cd ../..
 else
 	exec cd pfila
@@ -24,7 +24,7 @@ else
 	exec git clean -fd
 	exec git pull
 	exec cd client
-	exec npm run build-prod
+	exec npm run build-prod-debug
 	exec cd ../..
 fi;
 exec scp -r pfila/client/dist/client/ $server:~/website/pfila-int/prebuilt-client/
