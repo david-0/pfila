@@ -17,4 +17,9 @@ export class RestUrlPrefixService {
     }
     return window.location.protocol + '//' + this.window.location.hostname + ':' + this.window.location.port;
   }
+
+  public urlStartsWith(url: string, prefix: string) : boolean {
+    const expectedUrlStart = this.getPublicRestPrefix() + prefix;
+     return url.startsWith(expectedUrlStart);
+  }
 }
