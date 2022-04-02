@@ -18,8 +18,7 @@
               (click)="openDialog(user.id, user.firstname, user.lastname)">
         <mat-icon>delete</mat-icon>
         <span class="size-xl">löschen</span></button>
-      <span class="span__gray">{{user.firstname}} {{user.lastname}}, {{user.email}}
-        , Rollen: {{rolesAsString(user.roles)}}, Audits: {{user.audits?.length}}</span>
+      <span class="span__gray">{{user.firstname}} {{user.lastname}}, {{user.email}}, Rollen: {{rolesAsString(user.roles)}}, Audits: {{user.audits?.length}}</span>
     </div>
   </div>
 </div>
