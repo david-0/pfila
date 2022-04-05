@@ -49,9 +49,19 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     return (results && results.length > 0) ? results[1] : '';
   }
 
+  private sortComparator(a: IGroup,  b: IGroup): number {
+    if (a.name == 'keine') {
+      return 1;
+    }
+    if (b.name == 'keine') {
+      return -1;
+    }
+    return a.name.localeCompare(a.name);
+  }
+
   ngOnInit() {
     this.groupRestService.getAll().subscribe(groups => {
-      groups.sort((a, b) => a.name.localeCompare(b.name));
+      groups.sort((a, b) => this.sortComparator(a, b));
       this.groups.next(groups);
     });
     this.sub = this.route.params.subscribe((params: any) => {
