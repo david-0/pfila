@@ -51,6 +51,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.groupRestService.getAll().subscribe(groups => {
+      groups.sort((a, b) => a.name.localeCompare(b.name));
       this.groups.next(groups);
     });
     this.sub = this.route.params.subscribe((params: any) => {
