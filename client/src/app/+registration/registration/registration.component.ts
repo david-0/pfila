@@ -56,7 +56,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     if (b.name == 'keine') {
       return -1;
     }
-    return a.name.localeCompare(a.name);
+    return a.name.localeCompare(b.name);
   }
 
   ngOnInit() {
