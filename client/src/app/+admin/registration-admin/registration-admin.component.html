@@ -2,13 +2,25 @@
   <div class="div__header  div--maxwith">
     <h3 class="h3__small-margins">Anmeldungen</h3>
     <span class="fill-remaining-space"></span>
-    <button mat-button class="grayButton" [disabled]="!persons" (click)="saveFile()">
+    <mat-form-field appearance="fill">
+      <mat-label>Filter</mat-label>
+      <mat-select [formControl]="filterControl">
+        <mat-option >Alle Gruppen</mat-option>
+        <mat-optgroup *ngFor="let group of groups" [label]="group.name">
+          <mat-option *ngFor="let subgroup of group.subgroups" [value]="subgroup.id">
+            {{group.name}} - {{subgroup.name}}
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <span class="fill-remaining-space"></span>
+    <button mat-button class="grayButton" [disabled]="!allPersons" (click)="saveFile()">
       <mat-icon>forward</mat-icon>
       Export
     </button>
   </div>
   <div class="div--maxwith div--margins">
-    <div class="line" *ngFor="let person of persons | async">
+    <div class="line" *ngFor="let person of filteredPersons | async">
       <button mat-button *ngIf="authenticationService.isStandard() || authenticationService.isAdmin()"
               class="grayButton" [routerLink]="[ '/admin/dashboard/change-person', person.id ]">
         <mat-icon>edit</mat-icon>
