@@ -1,22 +1,26 @@
 @keyframes slidy {
   0% { left: 0%; }
-  15% {left: 0%}
-  20% {left: -100%}
-  35% {left: -100%}
-  40% { left: -200%; }
-  55% { left: -200%; }
-  60% { left: -300%; }
-  75% { left: -300%; }
-  80% { left: -400%; }
-  95% { left: -400%; }
+  14% {left: 0%}
+  16% {left: -100%}
+  28% {left: -100%}
+  30% { left: -200%; }
+  42% { left: -200%; }
+  44% { left: -300%; }
+  56% { left: -300%; }
+  58% { left: -400%; }
+  70% { left: -400%; }  
+  72% { left: -500%; }
+  84% { left: -500%; }  
+  86% { left: -600%; }
+  98% { left: -600%; }  
 }
 
 body { margin: 0; }
 div#slider { overflow: hidden; }
-div#slider figure img { width: 20%; float: left; }
+div#slider figure img { width: 14.28%; float: left; }
 div#slider figure {
   position: relative;
-  width: 500%;
+  width: 700%;
   margin: 0;
   left: 0;
   text-align: left;
