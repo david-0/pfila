@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {filter, map, switchMap} from 'rxjs/operators';
@@ -22,9 +22,9 @@ export class RegistrationComponent implements OnInit, OnDestroy {
   public subgroups: ISubgroup[] = [];
   public busy = false;
 
-  public plzControl: FormControl = new FormControl();
-  public cityControl: FormControl = new FormControl();
-  public subgroupControl: FormControl = new FormControl();
+  public plzControl: UntypedFormControl = new UntypedFormControl();
+  public cityControl: UntypedFormControl = new UntypedFormControl();
+  public subgroupControl: UntypedFormControl = new UntypedFormControl();
   public sub: Subscription;
 
   public edit: boolean;

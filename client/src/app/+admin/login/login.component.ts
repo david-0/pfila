@@ -1,5 +1,5 @@
 import {Component, isDevMode, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {first} from 'rxjs/operators';
 import {AuthGuard} from '../services/auth/auth-guard.service';
@@ -12,21 +12,21 @@ import {AuthenticationService} from '../services/auth/authentication.service';
 })
 export class LoginComponent implements OnInit {
 
-  public form: FormGroup;
-  private emailControl: FormControl;
-  private passwordControl: FormControl;
+  public form: UntypedFormGroup;
+  private emailControl: UntypedFormControl;
+  private passwordControl: UntypedFormControl;
   private returnUrl: string;
   public busy = false;
 
   public message: string;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
               private authenticationService: AuthenticationService,
               private authGuard: AuthGuard,
               private route: ActivatedRoute,
               private router: Router) {
-    this.emailControl = new FormControl('', [Validators.required]);
-    this.passwordControl = new FormControl('', [Validators.required]);
+    this.emailControl = new UntypedFormControl('', [Validators.required]);
+    this.passwordControl = new UntypedFormControl('', [Validators.required]);
     this.form = fb.group({
       email: this.emailControl,
       password: this.passwordControl,

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { GroupWithSubgroupsRestService } from 'src/app/servies/rest/group-with-subgroups-rest.service';
@@ -22,7 +22,7 @@ export class RegistrationAdminComponent implements OnInit, OnDestroy {
   private allPersons = new BehaviorSubject<IPerson[]>([]);
   private groups = [];
   private filteredPersons = new BehaviorSubject<IPerson[]>([]);
-  filterControl = new FormControl();
+  filterControl = new UntypedFormControl();
 
   constructor(private http: HttpClient,
     private authenticationService: AuthenticationService,
