@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { BehaviorSubject } from 'rxjs';
 import { GroupWithSubgroupsRestService } from 'src/app/servies/rest/group-with-subgroups-rest.service';
 import { IPerson } from '../../entities/person';
