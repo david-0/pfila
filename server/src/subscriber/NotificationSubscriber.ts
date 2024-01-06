@@ -66,12 +66,12 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
 
   private async registrationConfirmation(person: Person) {
     if (person.subgroup && person.subgroup.group && person.email) {
-      let text = "Guten Tag\r\n\r\nDanke für die Anmeldung von '" + person.firstname + " " + person.lastname + "' für das Pfila 2022 " +
+      let text = "Guten Tag\r\n\r\nDanke für die Anmeldung von '" + person.firstname + " " + person.lastname + "' für das Pfila 2024 " +
         "bei der Gruppe '" + person.subgroup.name + " - " + person.subgroup.group.name + "'.\r\n";
       if (person.subgroup.name === "Ameisli") {
-        text += "Die Ameislis sind am Pfila am Sonntag 05.06.2022 mit dabei.\r\n";
+        text += "Die Ameislis sind am Pfila am Sonntagnachmittag 19.05.2024 mit dabei.\r\n";
       } else {
-        text += "Für die Jungschärler dauert das Pfila vom Samstag - Montag (04.06. - 06.06.2022).\r\n";
+        text += "Für die Jungschärler dauert das Pfila vom Samstag - Montag (18.05. - 19.05.2024).\r\n";
       }
       if (person.subgroup.group.name === "keine") {
         text += "In den nächsten Tagen werden wir mit ihnen Konkakt aufnehmen.\r\n";
@@ -79,7 +79,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
       text += "Weitere Infomationen sind auf unserer Homepage https://usgwehlt-und-kröönt.ch zu finden.\r\n\r\n";
       text += "Sollten sie dieses Mail irrtümlicherweise erhalten haben bitten wir sie mit uns Kontakt auf zu nehmen.\r\n\r\n";
       text += "Herzlichen Dank\r\nDas Pfila-Team";
-      await this.mailService.sendMail(person.email, "Pfila2022 - Anmeldungbestätigung", text, null);
+      await this.mailService.sendMail(person.email, "Pfila2024 - Anmeldungbestätigung", text, null);
     }
   }
 
@@ -87,14 +87,14 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
     const text = "Hallo " + receiver.firstname + "\r\n"
       + "'" + person.firstname + " " + person.lastname + "', ein " + this.encodeFunction(person) + this.groupSubgroup(person) + " hat sich angemeldet."
       + "\r\n\r\nDetails: \r\n" + JSON.stringify(person, null, 2);
-    await this.mailService.sendMail(receiver.email, "Pfila2022 - neue Anmeldung", text, null);
+    await this.mailService.sendMail(receiver.email, "Pfila2024 - neue Anmeldung", text, null);
   }
 
   private async notifiyPersonDeleted(receiver: User, person: Person, currentUser: User) {
     const text = "Hallo " + receiver.firstname + "\r\n" + "Der Benutzer '" + currentUser.firstname + " " + currentUser.lastname + "' "
       + "(" + currentUser.id + ", " + currentUser.email + ") hat '" + person.firstname + " " + person.lastname + "' ein" + this.encodeFunction(person) + this.groupSubgroup(person) + " gelöscht."
       + "\r\n\r\nDetails: \r\n" + JSON.stringify(person, null, 2);
-    await this.mailService.sendMail(receiver.email, "Pfila2022 - Anmeldung gelöscht", text, null);
+    await this.mailService.sendMail(receiver.email, "Pfila2024 - Anmeldung gelöscht", text, null);
   }
 
   private async notifiyPersonChanged(receiver: User, beforeChange: Person, afterChange: Person, currentUser: User) {
@@ -102,7 +102,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
       + " (" + currentUser.id + ", " + currentUser.email + ") hat '" + afterChange.firstname + " " + afterChange.lastname + "' ein" + this.encodeFunction(afterChange) + this.groupSubgroup(afterChange) + " geändert."
       + "\r\n\r\nDetails:\r\n\r\n" + JSON.stringify(afterChange, null, 2)
       + "\r\n\r\nDetails vorher: \r\n" + JSON.stringify(beforeChange, null, 2);
-    await this.mailService.sendMail(receiver.email, "Pfila2022 - Anmeldung geändert", text, null);
+    await this.mailService.sendMail(receiver.email, "Pfila2024 - Anmeldung geändert", text, null);
   }
 
   private encodeFunction(person: Person): string {

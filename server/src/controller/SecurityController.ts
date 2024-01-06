@@ -235,20 +235,20 @@ export class SecurityController {
     }
     const link = `${domain}/admin/resetPassword/${token}`;
     this.LOGGER.info(`resetLink:${link}`);
-    await this.mailService.sendMail(user.email, "Pfila2022 - Passwort zurücksetzen",
+    await this.mailService.sendMail(user.email, "Pfila2024 - Passwort zurücksetzen",
       "Hallo\r\n\r\n" +
-      "Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2022 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.\r\n\r\n" +
+      "Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2024 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.\r\n\r\n" +
       "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.\r\n" +
       "Der Link ist zwei Stunden gültig.\r\n\r\n" + link + "\r\n\r\n" +
       "Wenn du dieses Mail irrtümlich erhalten hast, kannst du es ignorieren.\r\n\r\n" +
-      "Webmaster Pfila 2022",
+      "Webmaster Pfila 2024",
       "<h3>Hallo</h3>" +
-      "<p>Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2022 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.<br/>" +
+      "<p>Du erhältst dieses Mail weil du (oder jemand anderes) für den Pfila-2024 Benutzer '" + user.email + "' eine Passwort zurücksetzen Anfrage gestellt hat.<br/>" +
       "Bitte klicke auf den folgenden Link oder kopiere ihn in deinen Browser um den Vorgang abzuschliessen.<br/>" +
       "Der Link ist zwei Stunden gültig.</p>" +
       "<a href='" + link + "'>" + link + "</a>" +
       "<p>Wenn Sie dieses Mail irrtümlich erhalten haben, können Sie es ignorieren.</p>" +
-      "<p>Webmaster Pfila 2022</p>"
+      "<p>Webmaster Pfila 2024</p>"
     );
   }
 }
