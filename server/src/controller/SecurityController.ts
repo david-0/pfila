@@ -53,7 +53,7 @@ export class SecurityController {
     return Promise.reject("login NOT successfull");
   }
 
-  private async authenticateAudit(actionResult: string, user, body: any, request: express.Request): void {
+  private async authenticateAudit(actionResult: string, user, body: any, request: express.Request): Promise<void> {
     const audit = {
       user,
       action: "authenticate",
