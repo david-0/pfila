@@ -42,8 +42,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
   public async afterInsert(event: InsertEvent<Person>) {
     await this.reloadGroup(event.manager, event.entity);
     (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonCreated(u, event.entity));
-    this.registrationConfirmation(event.entity);
-
+    await this.registrationConfirmation(event.entity);
   }
 
   private async getUsersToNotifiy(manager: EntityManager): Promise<User[]> {
