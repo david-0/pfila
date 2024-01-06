@@ -29,7 +29,7 @@
     "@types/luxon": "^2.0.9",
     "file-saver": "^2.0.5",
     "luxon": "^3.4.4",
-    "ngx-socket-io": "~4.4.0",
+    "ngx-socket-io": "~4.5.0",
     "ngx-validators": "^6.0.1",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
