@@ -1,7 +1,10 @@
 import * as fs from "fs";
 import * as nodemailer from "nodemailer";
-import {SentMessageInfo} from "nodemailer";
+import { SentMessageInfo } from "nodemailer";
 
+import { configure, getLogger, Logger } from "log4js";
+
+const LOGGER: Logger = getLogger("Server");
 export class MailService {
   private host: string;
   private port: number;
@@ -20,8 +23,15 @@ export class MailService {
       this.from = config.from;
     }
   }
-
   public async sendMail(to: string, subject: string, text: string, html: string): Promise<SentMessageInfo> {
+    try {
+      return await this.trySendMail(to, subject, text, html);
+    } catch (err) {
+      LOGGER.error("Could not send email. Error:"+err);
+      return Promise.resolve(err);
+    }
+  }
+  private async trySendMail(to: string, subject: string, text: string, html: string): Promise<SentMessageInfo> {
     if (this.host === undefined) {
       return;
     }
