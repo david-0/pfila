@@ -13,30 +13,30 @@
     </mat-toolbar>
     <mat-list>
       <a mat-list-item [routerLink]="['/home']" (click)="sidenav.close()">
-        <mat-icon mat-list-icon>home</mat-icon>
-        <span mat-line>Home</span>
-        <span mat-line class="secondary">Home</span>
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Home</span>
+        <span matListItemLine>Home</span>
       </a>
       <a mat-list-item [routerLink]="['/info']" (click)="sidenav.close()">
-        <mat-icon mat-list-icon>info</mat-icon>
-        <span mat-line>Info</span>
-        <span mat-line class="secondary">Infomationen zum Pfila</span>
+        <mat-icon matListItemIcon>info</mat-icon>
+        <span matListItemTitle>Info</span>
+        <span matListItemLine>Infomationen zum Pfila</span>
       </a>
       <a mat-list-item [routerLink]="['/registration']" (click)="sidenav.close()">
-        <mat-icon mat-list-icon>grade</mat-icon>
-        <span mat-line>Anmeldung</span>
-        <span mat-line class="secondary">für Ameisli, Jungschärler & Leiter</span>
+        <mat-icon matListItemIcon>grade</mat-icon>
+        <span matListItemTitle>Anmeldung</span>
+        <span matListItemLine>für Ameisli, Jungschärler & Leiter</span>
       </a>
       <a mat-list-item [routerLink]="['/team']" (click)="sidenav.close()">
-        <mat-icon mat-list-icon>people</mat-icon>
-        <span mat-line>Kontakt</span>
-        <span mat-line class="secondary">Verantwortliches Team</span>
+        <mat-icon matListItemIcon>people</mat-icon>
+        <span matListItemTitle>Kontakt</span>
+        <span matListItemLine>Verantwortliches Team</span>
       </a>
       <div class="menu__separator"></div>
       <a mat-list-item [routerLink]="['/admin']" (click)="sidenav.close()">
-        <mat-icon mat-list-icon>arrow_forward</mat-icon>
-        <span mat-line>Administration</span>
-        <span mat-line class="secondary">Administrationsbereich für Leiter</span>
+        <mat-icon matListItemIcon>arrow_forward</mat-icon>
+        <span matListItemTitle>Administration</span>
+        <span matListItemLine>Administrationsbereich für Leiter</span>
       </a>
     </mat-list>
   </mat-sidenav>
