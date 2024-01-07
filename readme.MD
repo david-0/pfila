@@ -15,7 +15,7 @@ ssh root@<IPV4>
 ### Package installation
 apt update
 apt dist-upgrade
-apt install docker git docker-compose
+apt install docker git docker-compose npm
 ### register ssh-key on github
 ssh-keygen --> erstellt .ssh/id_rsa.pub und .ssh/id_rsa
 login to github
