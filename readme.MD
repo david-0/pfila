@@ -39,7 +39,7 @@ create .env-file with
 
 ## create docker image
 cd pfila
-npm install -g angular-cli
+npm install -g @angular/cli
 ./update.sh
 
 
