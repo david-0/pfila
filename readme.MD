@@ -15,7 +15,7 @@ ssh root@<IPV4>
 ### Package installation
 apt update
 apt dist-upgrade
-apt install docker git docker-compose npm
+apt install docker git docker-compose
 ### register ssh-key on github
 ssh-keygen --> erstellt .ssh/id_rsa.pub und .ssh/id_rsa
 login to github
@@ -38,8 +38,11 @@ create .env-file with
   HOST='localhost'
 
 ## create docker image
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - &&sudo apt-get install -y nodejs
 cd pfila
 npm install -g @angular/cli
+npm install tsc
+npm install typescript
 ./update.sh
 
 
