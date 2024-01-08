@@ -45,7 +45,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
 
 
   private static extractCity(label: string): string {
-    const results = /^<b>[0-9]{4} - (.*) \([A-Z,]*\)<\/b>$/g.exec(label);
+    const results = /^<b>[0-9]{4} - (.*)<\/b>$/g.exec(label);
     return (results && results.length > 0) ? results[1] : '';
   }
 
@@ -96,7 +96,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
         map(result => result.attrs),
         filter(attrs => attrs.label !== null),
         map(attrs => attrs.label),
-        map(RegistrationComponent.extractCity),
+        map(label => RegistrationComponent.extractCity(label)),
         filter(city => city.length > 0))));
   }
 
