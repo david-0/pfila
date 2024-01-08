@@ -30,7 +30,7 @@ services:
 
   adminer:
     image: adminer:4.8.1-standalone
-    restart: always
+    restart: unless-stopped
     ports:
       - 8080:8080
 
