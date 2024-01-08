@@ -28,13 +28,17 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
   public async beforeUpdate(event: UpdateEvent<Person>) {
     const person = plainToInstance(Person, event.entity);
     const currentUser = await event.manager.getRepository(User).findOne(event.queryRunner.data);
-    const userBeforeUpdate = await event.manager.getRepository(Person).findOne(event.databaseEntity.id, {relations: ["subgroup", "subgroup.group"]});
+    const userBeforeUpdate = await event.manager.getRepository(Person).findOne({
+      where: {id: event.databaseEntity.id},
+      relations: ["subgroup", "subgroup.group"]});
     await this.reloadGroup(event.manager, person);
     (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonChanged(u, userBeforeUpdate, person, currentUser));
   }
 
   public async beforeRemove(event: RemoveEvent<Person>) {
-    const userToDelete = await event.manager.getRepository(Person).findOne(event.databaseEntity.id, {relations: ["subgroup", "subgroup.group"]});
+    const userToDelete = await event.manager.getRepository(Person).findOne({
+      where: {id: event.databaseEntity.id},
+      relations: ["subgroup", "subgroup.group"]});
     const currentUser = await event.manager.getRepository(User).findOne(event.queryRunner.data);
     (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonDeleted(u, userToDelete, currentUser));
   }
@@ -46,18 +50,18 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
   }
 
   private async getUsersToNotifiy(manager: EntityManager): Promise<User[]> {
-    return await manager.getRepository(User).find({notification: true});
+    return await manager.getRepository(User).find({where: {notification: true}});
   }
 
   private async reloadGroup(manager: EntityManager, person: Person): Promise<void> {
     if (person && person.subgroup && person.subgroup.id) {
-      const subgroupResult = await manager.getRepository(Subgroup).findOne({id: person.subgroup.id}, {relations: ["group"]});
+      const subgroupResult = await manager.getRepository(Subgroup).findOne({where: {id: person.subgroup.id}, relations: ["group"]});
       if (subgroupResult && subgroupResult.group) {
         person.subgroup.group = subgroupResult.group;
       }
     }
     if (person && person.subgroup && typeof person.subgroup === "number") {
-      const subgroupResult = await manager.getRepository(Subgroup).findOne({id: person.subgroup}, {relations: ["group"]});
+      const subgroupResult = await manager.getRepository(Subgroup).findOne( {where: {id: person.subgroup}, relations: ["group"]});
       if (subgroupResult && subgroupResult.group) {
         person.subgroup = subgroupResult;
       }

@@ -1,74 +1,53 @@
 import { plainToInstance } from "class-transformer";
-import { Authorized, Body, CurrentUser, Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
-import { EntityManager, getManager, Repository, Transaction, TransactionManager } from "typeorm";
 import { Person } from "../entity/Person";
+import { Request, Response } from "express";
+import { AppDataSource } from "../app-data-source";
 
-@JsonController("/api/person")
 export class PersonController {
-  private personRepository: (manager: EntityManager) => Repository<Person>;
 
-  constructor() {
-    this.personRepository = manager => manager.getRepository(Person);
+  static async get(req: Request, res: Response) {
+    const { id } = req.params;
+    const person = await AppDataSource.getRepository(Person).findOne({ where: { id: +id } });
+    return res.status(200).json(person);
   }
 
-  @Transaction()
-  @Authorized("admin")
-  @Get("/:id([0-9]+)")
-  public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.personRepository(manager).findOne(id);
+  static async getAll(req: Request, res: Response) {
+    const persons = await AppDataSource.getRepository(Person).find();
+    return res.status(200).json(persons);
   }
 
-  @Transaction()
-  @Authorized("admin")
-  @Get()
-  public async getAll(@TransactionManager() manager: EntityManager) {
-    return await this.personRepository(manager).find();
+  static async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const newPerson = plainToInstance(Person, req.body);
+    const personRepository = AppDataSource.getRepository(Person);
+    const loadedPerson = await personRepository.findOne({ where: { id: +id } });
+    const mergedPerson = personRepository.merge(loadedPerson, newPerson);
+    const updatedPerson = await personRepository.save(mergedPerson);
+    return res.status(200).json(updatedPerson);
   }
 
-  @Transaction()
-  @Authorized("admin")
-  @Put("/:id([0-9]+)")
-  public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newPersonFromBody: Person, @CurrentUser({ required: true }) userId: number) {
-    const person = await this.personRepository(manager).findOne(id);
-    const newPerson = plainToInstance(Person, newPersonFromBody);
-    return await this.personRepository(manager).save(this.personRepository(manager).merge(person, newPerson), { data: userId });
+  static async save(req: Request, res: Response) {
+    const newPerson = plainToInstance(Person, req.body);
+    const person = await AppDataSource.getRepository(Person).save(newPerson);
+    return res.status(200).json(person);
   }
 
-  @Transaction()
-  @Authorized("admin")
-  @Delete("/:id([0-9]+)")
-  public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number, @CurrentUser({ required: true }) userId: number) {
-    const person = new Person();
-    person.id = id;
-    return await this.personRepository(manager).remove(person, { data: userId });
+  static async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const personToDelete = new Person();
+    personToDelete.id = +id;
+    const deletedPerson = await AppDataSource.getRepository(Person).remove(personToDelete);
+    return res.status(200).json(deletedPerson);
   }
 
-  @Transaction()
-  @Authorized(["admin", "standard"])
-  @Get("/withAll/:id([0-9]+)")
-  public async getWithAll(@TransactionManager() manager: EntityManager, @Param("id") id: number, @CurrentUser({ required: true }) userId: number) {
-    return await this.personRepository(manager).findOne(id, { relations: ["subgroup", "subgroup.group"] });
+  static async getWithAll(req: Request, res: Response) {
+    const { id } = req.params;
+    const person = await AppDataSource.getRepository(Person).findOne({ where: { id: +id }, relations: ["subgroup", "subgroup.group"] });
+    return res.status(200).json(person);
   }
 
-  @Transaction()
-  @Authorized()
-  @Get("/withAll")
-  public async getAllWithAll(@TransactionManager() manager: EntityManager) {
-    return await this.personRepository(manager).find({ relations: ["subgroup", "subgroup.group"] });
-  }
-
-  @Transaction()
-  @Post("/withAll")
-  public async saveWithAll(@TransactionManager() manager: EntityManager, @Body() person: Person) {
-    return await this.personRepository(manager).insert(person);
-  }
-
-  @Transaction()
-  @Authorized(["admin", "standard"])
-  @Put("/withAll/:id([0-9]+)")
-  public async updateWithAll(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newPersonFromBody: Person, @CurrentUser({ required: true }) userId: number) {
-    const person = await this.personRepository(manager).findOne(id);
-    const newPerson = plainToInstance(Person, newPersonFromBody);
-    return await this.personRepository(manager).save(this.personRepository(manager).merge(person, newPerson), { data: userId });
+  static async getAllWithAll(req: Request, res: Response) {
+    const persons = await AppDataSource.getRepository(Person).find({ relations: ["subgroup", "subgroup.group"] });
+    return res.status(200).json(persons);
   }
 }

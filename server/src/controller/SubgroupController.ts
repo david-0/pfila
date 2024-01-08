@@ -1,50 +1,42 @@
 import { plainToInstance } from "class-transformer";
-import {Authorized, Body, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers";
-import {EntityManager, getManager, Repository, Transaction, TransactionManager} from "typeorm";
-import {Subgroup} from "../entity/Subgroup";
+import { Subgroup } from "../entity/Subgroup";
+import { Request, Response } from "express";
+import { AppDataSource } from "../app-data-source";
 
-@Authorized("admin")
-@JsonController("/api/subgroup")
 export class SubgroupController {
 
-  private subgroupRepository: (manager: EntityManager) => Repository<Subgroup>;
-
-  constructor() {
-    this.subgroupRepository = manager => manager.getRepository(Subgroup);
+  static async get(req: Request, res: Response) {
+    const { id } = req.params;
+    const group = await AppDataSource.getRepository(Subgroup).findOne({ where: { id: +id } });
+    return res.status(200).json(group);
   }
 
-  @Transaction()
-  @Get("/:id([0-9]+)")
-  public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.subgroupRepository(manager).findOne(id);
+  static async getAll(req: Request, res: Response) {
+    const groups = await AppDataSource.getRepository(Subgroup).find();
+    return res.status(200).json(groups);
   }
 
-  @Transaction()
-  @Get()
-  public async getAll(@TransactionManager() manager: EntityManager) {
-    return await this.subgroupRepository(manager).find();
+  static async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const newSubgroup = plainToInstance(Subgroup, req.body);
+    const groupRepository = AppDataSource.getRepository(Subgroup);
+    const loadedSubgroup = await groupRepository.findOne({ where: { id: +id } });
+    const mergedSubgroup = groupRepository.merge(loadedSubgroup, newSubgroup);
+    const updatedSubgroup = await groupRepository.save(mergedSubgroup);
+    return res.status(200).json(updatedSubgroup);
   }
 
-  @Transaction()
-  @Put("/:id([0-9]+)")
-  public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newSubgroupFromBody: Subgroup) {
-    const subgroup = await this.subgroupRepository(manager).findOne(id);
-    const newSubgroup = plainToInstance(Subgroup, newSubgroupFromBody);
-    return await this.subgroupRepository(manager).save(this.subgroupRepository(manager).merge(subgroup, newSubgroup));
+  static async save(req: Request, res: Response) {
+    const newSubgroup = plainToInstance(Subgroup, req.body);
+    const group = await AppDataSource.getRepository(Subgroup).save(newSubgroup);
+    return res.status(200).json(group);
   }
 
-  @Transaction()
-  @Post()
-  public async save(@TransactionManager() manager: EntityManager, @Body() newSubgroupFromBody: Subgroup) {
-    const subgroup = plainToInstance(Subgroup, newSubgroupFromBody);
-    return await this.subgroupRepository(manager).save(subgroup);
-  }
-
-  @Transaction()
-  @Delete("/:id([0-9]+)")
-  public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    const subgroup = new Subgroup();
-    subgroup.id = id;
-    return await this.subgroupRepository(manager).remove(subgroup);
+  static async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const groupToDelete = new Subgroup();
+    groupToDelete.id = +id;
+    const deletedSubgroup = await AppDataSource.getRepository(Subgroup).remove(groupToDelete);
+    return res.status(200).json(deletedSubgroup);
   }
 }

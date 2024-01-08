@@ -1,112 +1,63 @@
 import { plainToInstance } from "class-transformer";
-import { Authorized, Body, Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
-import { EntityManager, Repository, Transaction, TransactionManager } from "typeorm";
 import { User } from "../entity/User";
+import { Request, Response } from "express";
+import { AppDataSource } from "../app-data-source";
 
-@Authorized("admin")
-@JsonController("/api/user")
 export class UserController {
-  private userRepository: (manager: EntityManager) => Repository<User>;
-
-  constructor() {
-    this.userRepository = manager => manager.getRepository(User);
+  static async get(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = await AppDataSource.getRepository(User).findOne({ where: { id: +id } });
+    return res.status(200).json(user);
   }
 
-  @Transaction()
-  @Get("/:id([0-9]+)")
-  public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.userRepository(manager).findOne(id);
+  static async getAll(req: Request, res: Response) {
+    const users = await AppDataSource.getRepository(User).find();
+    return res.status(200).json(users);
   }
 
-  @Transaction()
-  @Get()
-  public async getAll(@TransactionManager() manager: EntityManager) {
-    return await this.userRepository(manager).find();
+  static async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const newUser = plainToInstance(User, req.body);
+    const userRepository = AppDataSource.getRepository(User);
+    const loadedUser = await userRepository.findOne({ where: { id: +id } });
+    const mergedUser = userRepository.merge(loadedUser, newUser);
+    const updatedUser = await userRepository.save(mergedUser);
+    return res.status(200).json(updatedUser);
   }
 
-  @Transaction()
-  @Post()
-  public async save(@TransactionManager() manager: EntityManager, @Body() userFromBody: User) {
-    const user = plainToInstance(User, userFromBody);
-    return await this.userRepository(manager).save(user);
+  static async save(req: Request, res: Response) {
+    const newUser = plainToInstance(User, req.body);
+    const user = await AppDataSource.getRepository(User).save(newUser);
+    return res.status(200).json(user);
   }
 
-  @Transaction()
-  @Delete("/:id([0-9]+)")
-  public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    const user = new User();
-    user.id = id;
-    return await this.userRepository(manager).remove(user);
+  static async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const userToDelete = new User();
+    userToDelete.id = +id;
+    const deletedUser = await AppDataSource.getRepository(User).remove(userToDelete);
+    return res.status(200).json(deletedUser);
   }
 
-  @Transaction()
-  @Get("/withRoles/:id([0-9]+)")
-  public async getWithRoles(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.userRepository(manager).findOne(id, { relations: ["roles"] });
+  static async getWithRoles(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = await AppDataSource.getRepository(User).findOne({ where: { id: +id }, relations: ["roles"] });
+    return res.status(200).json(user);
   }
 
-  @Transaction()
-  @Get("/withRoles")
-  public async getAllWithRoles(@TransactionManager() manager: EntityManager) {
-    return await this.userRepository(manager).find({ relations: ["roles"] });
+  static async getAllWithRoles(req: Request, res: Response) {
+    const users = await AppDataSource.getRepository(User).find({ relations: ["roles"] });
+    return res.status(200).json(users);
   }
 
-  @Transaction()
-  @Post("/withRoles")
-  public async saveWithRoles(@TransactionManager() manager: EntityManager, @Body() userFromBody: User) {
-    const user = plainToInstance(User, userFromBody);
-    return await this.userRepository(manager).save(user);
+  static async getWithRolesAndAudits(req: Request, res: Response) {
+    const { id } = req.params;
+    const user = await AppDataSource.getRepository(User).findOne({ where: { id: +id }, relations: ["roles", "audits"] });
+    return res.status(200).json(user);
   }
 
-  @Transaction()
-  @Put("/withRoles/:id([0-9]+)")
-  public async updateWithRoles(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newUserFromBody: User) {
-    const user = await this.userRepository(manager).findOne(id);
-    const newUser = plainToInstance(User, newUserFromBody);
-    return await this.userRepository(manager).save(this.userRepository(manager).merge(user, newUser));
+  static async getAllWithRolesAndAudits(req: Request, res: Response) {
+    const users = await AppDataSource.getRepository(User).find({ relations: ["roles", "audits"] });
+    return res.status(200).json(users);
   }
-
-  @Transaction()
-  @Delete("/withRoles/:id([0-9]+)")
-  public async deleteWithRoles(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    const user = new User();
-    user.id = id;
-    return await this.userRepository(manager).remove(user);
-  }
-
-  @Transaction()
-  @Get("/withRolesAndAudit")
-  public async getAllWithRolesAndAudits(@TransactionManager() manager: EntityManager) {
-    return await this.userRepository(manager).find({ relations: ["roles", "audits"] });
-  }
-
-  @Transaction()
-  @Get("/withRolesAndAudit/:id([0-9]+)")
-  public async getWithRolesAndAudit(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.userRepository(manager).findOne(id, { relations: ["roles", "audits"] });
-  }
-
-  @Transaction()
-  @Put("/withRolesAndAudit/:id([0-9]+)")
-  public async updateWithRolesAndAudit(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newUserFromBody: User) {
-    const user = await this.userRepository(manager).findOne(id);
-    const newUser = plainToInstance(User, newUserFromBody);
-    return await this.userRepository(manager).save(this.userRepository(manager).merge(user, newUser));
-  }
-
-  @Transaction()
-  @Post("/withRolesAndAudit")
-  public async saveWithRolesAndAudit(@TransactionManager() manager: EntityManager, @Body() userFromBody: User) {
-    const user = plainToInstance(User, userFromBody);
-    return await this.userRepository(manager).save(user);
-  }
-
-  @Transaction()
-  @Delete("/withRolesAndAudit/:id([0-9]+)")
-  public async deleteWithRolesWithAudit(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    const user = new User();
-    user.id = id;
-    return await this.userRepository(manager).remove(user);
-  }
-
 }

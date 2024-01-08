@@ -1,20 +1,11 @@
-import {Authorized, Get, JsonController} from "routing-controllers";
-import {EntityManager, getManager, Repository, Transaction, TransactionManager} from "typeorm";
-import {UserAudit} from "../entity/UserAudit";
+import { UserAudit } from "../entity/UserAudit";
+import { AppDataSource } from "../app-data-source";
+import { Request, Response } from "express";
 
-@Authorized("admin")
-@JsonController("/api/userAudit")
 export class UserAuditController {
 
-  private userAuditRepository: (manager: EntityManager) => Repository<UserAudit>;
-
-  constructor() {
-    this.userAuditRepository = manager => manager.getRepository(UserAudit);
-  }
-
-  @Transaction()
-  @Get()
-  public async getAll(@TransactionManager() manager: EntityManager) {
-    return await this.userAuditRepository(manager).find();
+  static async getAll(req: Request, res: Response) {
+    const userAudits = await AppDataSource.getRepository(UserAudit).find();
+    return res.status(200).json(userAudits);
   }
 }

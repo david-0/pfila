@@ -1,75 +1,85 @@
 import * as compression from "compression";
-import * as express from "express";
+import * as cors from "cors";
 import * as fs from "fs";
+import * as express from "express";
 import * as http from "http";
 import * as https from "https";
-import { verify, VerifyErrors } from "jsonwebtoken";
 import { configure, getLogger, Logger } from "log4js";
-import * as path from "path";
+import * as dotenv from "dotenv";
 import "reflect-metadata";
-import { Action, useExpressServer } from "routing-controllers";
-import { Container } from "typeorm-typedi-extensions";
-import { createConnection, getManager, useContainer } from "typeorm";
-import { GroupController } from "./controller/GroupController";
-import { PersonController } from "./controller/PersonController";
-import { RoleController } from "./controller/RoleController";
-import { SecurityController } from "./controller/SecurityController";
-import { SubgroupController } from "./controller/SubgroupController";
-import { UserController } from "./controller/UserController";
-import { User } from "./entity/User";
-import { CustomErrorHandler } from "./utils/CustomErrorHandler";
 
-import { JwtConfiguration } from "./utils/JwtConfiguration";
 import { ResetTokenEvictor } from "./utils/ResetTokenEvictor";
 import { StartupNotifier } from "./utils/StartupNotifier";
-import { SuppressNextMiddlewareHandler } from "./utils/SuppressNextMiddlewareHandler";
+import { errorHandler } from "./middleware/error.middleware";
+import { AppDataSource } from "./app-data-source";
+import { personRouter } from "./routes/person.routes";
+import { groupRouter } from "./routes/group.routes";
+import { roleRouter } from "./routes/role.routes";
+import { userAuditRouter } from "./routes/useraudit.routes";
+import { userRouter } from "./routes/user.routes";
+import { subgroupRouter } from "./routes/subgroup.routes";
+import { securityRouter } from "./routes/security.routes";
+
 
 const LOGGER: Logger = getLogger("Server");
-
-declare var process: any;
-declare var dirname: any;
+dotenv.config({ path: "../.env" });
 
 class Server {
 
   public static bootstrap(): Server {
+    LOGGER.info(`startup`);
     return new Server();
   }
 
-  public app: express.Express;
+  public app: express.Application;
   private server: any;
-  private root: string;
   private port: number;
   private protocol: string;
   private portHttps: number;
   private portHttp: number;
   private host: string;
   private env: string;
-  private jwtConfig: JwtConfiguration;
 
   constructor() {
-
     configure({
       appenders: { out: { type: "stdout" } },
       categories: { default: { appenders: ["out"], level: "info" } },
     });
+    this.config();
     this.app = express();
     this.app.use(compression());
-    this.config();
-    useContainer(Container);
-    createConnection().then(async connection => {
-      new ResetTokenEvictor().schedule(0);
+    this.app.use(express.json());
+    this.app.use(errorHandler);
+    AppDataSource.initialize()
+      .then(async () => {
+        new ResetTokenEvictor().schedule(0);
+        this.routes();
+        this.staticRoutes();
+        this.defaultRoute();
+        this.createServer();
+        this.app.get("*", (req: express.Request, res: express.Response) => {
+          res.status(505).json({ message: "Bad Request" });
+        });
 
-      this.routes();
-      this.staticRoutes();
-      this.defaultRoute();
-      this.createServer();
+        // Start listening
+        this.listen();
+        new StartupNotifier().notify("david.leuenberger@gmx.ch", this.env + ":" + this.port);
+      }).catch(err => {
+        LOGGER.error("Create Connection error: {}", err);
+      });
+  }
 
-      // Start listening
-      this.listen();
-      new StartupNotifier().notify("david.leuenberger@gmx.ch", this.env + ":" + this.port);
-    }).catch(err => {
-      LOGGER.error("Create Connection error: {}", err);
-    });
+  private corsOptions(): cors.CorsOptions {
+    let corsOptions: cors.CorsOptions = {};
+    if (this.env !== "production") {
+      corsOptions = {
+        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+        methods: "POST, GET, PATCH, DELETE, PUT",
+        origin: "*",
+        preflightContinue: false,
+      };
+    }
+    return corsOptions;
   }
 
   private createServer() {
@@ -113,40 +123,18 @@ class Server {
   }
 
   private config(): void {
-    this.portHttps = process.env.PORT || 3002;
-    this.portHttp = process.env.PORT_HTTP || 3001;
-    this.root = path.join(__dirname);
+    this.portHttps = +process.env.PORT || 3002;
+    this.portHttp = +process.env.PORT_HTTP || 3001;
     this.host = "localhost";
     this.env = process.env.NODE_ENV || "development";
 
-    this.jwtConfig = new JwtConfiguration(this.env);
     if (this.env === "production") {
-      this.jwtConfig.initProd("../../certificate/jwt/private-key.pem", "../../certificate/jwt/public-key.pem");
-      this.portHttps = process.env.PORT || 443;
-      this.portHttp = process.env.PORT_HTTP || 80;
+      this.portHttps = +process.env.PORT || 443;
+      this.portHttp = +process.env.PORT_HTTP || 80;
       LOGGER.info(`PRODUCTION-MODE, use private/public keys.`);
     } else {
       LOGGER.info(`DEVELOPMENT-MODE, use shared secret.`);
     }
-  }
-
-  private async authorizationChecker(action: Action, roles: string[]): Promise<boolean> {
-    const authHeaderName = "authorization";
-    const header = action.request.headers[authHeaderName];
-    if (!header) {
-      return false;
-    }
-    const token = header.substring(7); // remove "Bearer " prefix
-    const user: any = await this.verifyToken(token, this.jwtConfig.getVerifySecret());
-    return user && (!roles.length || roles.filter(role => user.roles.indexOf(role) !== -1).length > 0);
-  }
-
-  private async currentUserChecker(action: Action): Promise<number> {
-    const authHeaderName = "authorization";
-    const header = action.request.headers[authHeaderName];
-    const token = header.substring(7); // remove "Bearer " prefix
-    const user = await this.verifyToken(token, this.jwtConfig.getVerifySecret());
-    return user.id;
   }
 
   private staticRoutes(): void {
@@ -164,50 +152,21 @@ class Server {
   }
 
   private routes(): void {
-    let corsOptions = {};
-    if (this.env !== "producation") {
-      corsOptions = {
-        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-        methods: "POST, GET, PATCH, DELETE, PUT",
-        origin: "*",
-        preflightContinue: false,
-      };
-    }
-    useExpressServer(this.app, {
-      authorizationChecker: async (action: Action, roles: string[]) => this.authorizationChecker(action, roles),
-      controllers: [
-        GroupController,
-        PersonController,
-        RoleController,
-        SecurityController,
-        SubgroupController,
-        UserController,
-      ],
-      cors: corsOptions,
-      currentUserChecker: async (action: Action) => this.currentUserChecker(action),
-      defaultErrorHandler: false,
-      middlewares: [
-        CustomErrorHandler,
-        SuppressNextMiddlewareHandler,
-      ],
-    });
-  }
-
-  private verifyToken(tokenAsString: string, secret: string | Buffer): Promise<User> {
-    return new Promise<User>((resolve, reject) => verify(tokenAsString, secret, (err: VerifyErrors, decoded: User) => {
-      if (decoded) {
-        resolve(decoded);
-      } else {
-        reject();
-      }
-    }));
+    this.app.use(cors(this.corsOptions()));
+    this.app.use("/api/person", personRouter);
+    this.app.use("/api/group", groupRouter);
+    this.app.use("/api/role", roleRouter);
+    this.app.use("/api/security", securityRouter);
+    this.app.use("/api/subgroup", subgroupRouter);
+    this.app.use("/api/user", userRouter);
+    this.app.use("/api/useraudit", userAuditRouter);
   }
 
   // Start HTTP server listening
   private listen(): void {
     this.server.listen(this.port);
 
-    // add error handler
+    // // add error handler
     this.server.on("error", this.logError);
 
     // start listening on port

@@ -1,0 +1,103 @@
+import * as express from "express";
+import { authentification } from "../middleware/authentification.middleware";
+import { authorization } from "../middleware/authorization.middleware";
+import { UserController } from "../controller/UserController";
+import { SecurityController } from "../controller/SecurityController";
+const Router = express.Router();
+
+Router.post(
+    "/changemypassword",
+    authentification,
+    SecurityController.changeMyPassword
+);
+Router.get(
+    "/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.get
+);
+Router.get(
+    "",
+    authentification,
+    authorization(["admin"]),
+    UserController.getAll
+);
+Router.put(
+    "/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.update
+);
+Router.post(
+    "",
+    authentification,
+    authorization(["admin"]),
+    UserController.save
+);
+Router.delete(
+    "/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.delete
+);
+Router.get(
+    "/WithRoles/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.getWithRoles
+);
+Router.get(
+    "/WithRoles",
+    authentification,
+    authorization(["admin"]),
+    UserController.getAllWithRoles
+);
+Router.put(
+    "/WithRoles/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.update
+);
+Router.post(
+    "/WithRoles",
+    authentification,
+    authorization(["admin"]),
+    UserController.save
+);
+Router.delete(
+    "/WithRoles/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.delete
+);
+Router.get(
+    "/WithRolesAndAudit/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.getWithRolesAndAudits
+);
+Router.get(
+    "/WithRolesAndAudit",
+    authentification,
+    authorization(["admin"]),
+    UserController.getAllWithRolesAndAudits
+);
+Router.put(
+    "/WithRolesAndAudit/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.update
+);
+Router.post(
+    "/WithRolesAndAudit",
+    authentification,
+    authorization(["admin"]),
+    UserController.save
+);
+Router.delete(
+    "/WithRolesAndAudit/:id([0-9]+)",
+    authentification,
+    authorization(["admin"]),
+    UserController.delete
+);
+export { Router as userRouter };

@@ -1,69 +1,53 @@
 import { plainToInstance } from "class-transformer";
-import { Authorized, Body, Delete, Get, JsonController, Param, Post, Put } from "routing-controllers";
-import { EntityManager, getManager, Repository, Transaction, TransactionManager } from "typeorm";
 import { Role } from "../entity/Role";
+import { Request, Response } from "express";
+import { AppDataSource } from "../app-data-source";
 
-@Authorized("admin")
-@JsonController("/api/role")
 export class RoleController {
-  private roleRepository: (manager: EntityManager) => Repository<Role>;
 
-  constructor() {
-    this.roleRepository = manager => manager.getRepository(Role);
+  static async get(req: Request, res: Response) {
+    const { id } = req.params;
+    const role = await AppDataSource.getRepository(Role).findOne({ where: { id: +id } });
+    return res.status(200).json(role);
   }
 
-  @Transaction()
-  @Get("/:id([0-9]+)")
-  public async get(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.roleRepository(manager).findOne(id);
+  static async getAll(req: Request, res: Response) {
+    const roles = await AppDataSource.getRepository(Role).find();
+    return res.status(200).json(roles);
   }
 
-  @Transaction()
-  @Get()
-  public async  getAll(@TransactionManager() manager: EntityManager) {
-    return await this.roleRepository(manager).find();
+  static async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const newRole = plainToInstance(Role, req.body);
+    const roleRepository = AppDataSource.getRepository(Role);
+    const loadedRole = await roleRepository.findOne({ where: { id: +id } });
+    const mergedRole = roleRepository.merge(loadedRole, newRole);
+    const updatedRole = await roleRepository.save(mergedRole);
+    return res.status(200).json(updatedRole);
   }
 
-  @Transaction()
-  @Put("/:id([0-9]+)")
-  public async update(@TransactionManager() manager: EntityManager, @Param("id") id: number, @Body() newRoleFromBody: Role) {
-    const role = await this.roleRepository(manager).findOne(id);
-    const newRole = plainToInstance(Role, newRoleFromBody);
-    return await this.roleRepository(manager).save(this.roleRepository(manager).merge(role, newRole));
+  static async save(req: Request, res: Response) {
+    const newRole = plainToInstance(Role, req.body);
+    const role = await AppDataSource.getRepository(Role).save(newRole);
+    return res.status(200).json(role);
   }
 
-  @Transaction()
-  @Post()
-  public async save(@TransactionManager() manager: EntityManager, @Body() roleFromBody: Role) {
-    const role = plainToInstance(Role, roleFromBody);
-    return await this.roleRepository(manager).save(role);
+  static async delete(req: Request, res: Response) {
+    const { id } = req.params;
+    const roleToDelete = new Role();
+    roleToDelete.id = +id;
+    const deletedRole = await AppDataSource.getRepository(Role).remove(roleToDelete);
+    return res.status(200).json(deletedRole);
   }
 
-  @Transaction()
-  @Delete("/:id([0-9]+)")
-  public async delete(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    const role = new Role();
-    role.id = id;
-    return await this.roleRepository(manager).remove(role);
+  static async getWithUsers(req: Request, res: Response) {
+    const { id } = req.params;
+    const role = await AppDataSource.getRepository(Role).findOne({ where: { id: +id }, relations: ["users"] });
+    return res.status(200).json(role);
   }
 
-  @Transaction()
-  @Get("/withUsers/:id([0-9]+)")
-  public async getWithUsers(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    return await this.roleRepository(manager).findOne(id, { relations: ["users"] });
-  }
-
-  @Transaction()
-  @Get("/withUsers")
-  public async getAllWithUsers(@TransactionManager() manager: EntityManager) {
-    return await this.roleRepository(manager).find({ relations: ["users"] });
-  }
-
-  @Transaction()
-  @Delete("/withUsers/:id([0-9]+)")
-  public async deleteWithUsers(@TransactionManager() manager: EntityManager, @Param("id") id: number) {
-    const role = new Role();
-    role.id = id;
-    return await this.roleRepository(manager).remove(role);
+  static async getAllWithUsers(req: Request, res: Response) {
+    const roles = await AppDataSource.getRepository(Role).find({ relations: ["users"] });
+    return res.status(200).json(roles);
   }
 }

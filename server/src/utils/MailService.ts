@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as nodemailer from "nodemailer";
 import { SentMessageInfo } from "nodemailer";
 
-import { configure, getLogger, Logger } from "log4js";
+import { getLogger, Logger } from "log4js";
 
 const LOGGER: Logger = getLogger("Server");
 export class MailService {
