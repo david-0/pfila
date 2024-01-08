@@ -11,4 +11,5 @@ COPY ["server/package.json", "server/package-lock.json", "server/tsconfig.json",
 COPY server/src ./src
 RUN npm install
 RUN npm run build
+COPY .env .
 CMD npm run start
