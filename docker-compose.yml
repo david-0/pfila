@@ -20,7 +20,7 @@ services:
     restart: always
     build: ./database
     ports:
-      - '5444:${DB_PORT}'
+      - '127.0.0.1:${DB_PORT}:${DB_PORT}'
     volumes:
       - data:/var/lib/postgresql/data
     environment:
