@@ -5,7 +5,6 @@ import * as express from "express";
 import * as http from "http";
 import * as https from "https";
 import { configure, getLogger, Logger } from "log4js";
-import * as dotenv from "dotenv";
 import "reflect-metadata";
 
 import { ResetTokenEvictor } from "./utils/ResetTokenEvictor";
@@ -19,33 +18,25 @@ import { userAuditRouter } from "./routes/useraudit.routes";
 import { userRouter } from "./routes/user.routes";
 import { subgroupRouter } from "./routes/subgroup.routes";
 import { securityRouter } from "./routes/security.routes";
-
+import { AppEnv } from "./app-env";
 
 const LOGGER: Logger = getLogger("Server");
-dotenv.config({ path: "../.env" });
 
 class Server {
 
   public static bootstrap(): Server {
-    LOGGER.info(`startup`);
     return new Server();
   }
 
   public app: express.Application;
   private server: any;
-  private port: number;
-  private protocol: string;
-  private portHttps: number;
-  private portHttp: number;
-  private host: string;
-  private env: string;
 
   constructor() {
     configure({
       appenders: { out: { type: "stdout" } },
       categories: { default: { appenders: ["out"], level: "info" } },
     });
-    this.config();
+    this.logServerType();
     this.app = express();
     this.app.use(compression());
     this.app.use(express.json());
@@ -63,7 +54,7 @@ class Server {
 
         // Start listening
         this.listen();
-        new StartupNotifier().notify("david.leuenberger@gmx.ch", this.env + ":" + this.port);
+        new StartupNotifier().notify("david.leuenberger@gmx.ch", AppEnv.getUrl());
       }).catch(err => {
         LOGGER.error("Create Connection error: {}", err);
       });
@@ -71,7 +62,7 @@ class Server {
 
   private corsOptions(): cors.CorsOptions {
     let corsOptions: cors.CorsOptions = {};
-    if (this.env !== "production") {
+    if (AppEnv.prod) {
       corsOptions = {
         allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization",
         methods: "POST, GET, PATCH, DELETE, PUT",
@@ -83,7 +74,7 @@ class Server {
   }
 
   private createServer() {
-    if (this.env === "production" || fs.existsSync("../../certificate/ssl/privkey.pem")) {
+    if (AppEnv.prod) {
       this.redirectHttp();
       this.server = this.createHttpsServer();
     } else {
@@ -93,8 +84,6 @@ class Server {
 
   private createHttpsServer() {
     LOGGER.info("Start HTTPS server");
-    this.port = this.portHttps;
-    this.protocol = "https";
     return https.createServer({
       ca: fs.readFileSync("../../certificate/ssl/chain.pem"),
       cert: fs.readFileSync("../../certificate/ssl/cert.pem"),
@@ -104,33 +93,24 @@ class Server {
 
   private createHttpServer() {
     LOGGER.info("Start HTTP server");
-    this.port = this.portHttp;
-    this.protocol = "http";
     return http.createServer(this.app);
   }
 
   private redirectHttp() {
-    LOGGER.info(`Redirect from ${this.portHttp} to ${this.portHttps}.`);
+    LOGGER.info(`Redirect from ` + AppEnv.portHttp + ` to ` + AppEnv.portHttps + `.`);
     // set up plain http server
     const httpApp = express();
     const httpServer = http.createServer(httpApp);
     httpApp.use("*", this.redirectToHttps);
-    httpServer.listen(this.portHttp);
+    httpServer.listen(AppEnv.portHttp);
   }
 
   private redirectToHttps(req: express.Request, res: express.Response, next: express.NextFunction) {
-    res.redirect("https://usgwehlt-und-kröönt.ch" + req.url);
+    res.redirect(AppEnv.getUrl() + req.url);
   }
 
-  private config(): void {
-    this.portHttps = +process.env.PORT || 3002;
-    this.portHttp = +process.env.PORT_HTTP || 3001;
-    this.host = "localhost";
-    this.env = process.env.NODE_ENV || "development";
-
-    if (this.env === "production") {
-      this.portHttps = +process.env.PORT || 443;
-      this.portHttp = +process.env.PORT_HTTP || 80;
+  private logServerType(): void {
+    if (AppEnv.prod) {
       LOGGER.info(`PRODUCTION-MODE, use private/public keys.`);
     } else {
       LOGGER.info(`DEVELOPMENT-MODE, use shared secret.`);
@@ -164,14 +144,14 @@ class Server {
 
   // Start HTTP server listening
   private listen(): void {
-    this.server.listen(this.port);
+    this.server.listen(AppEnv.getPort());
 
     // // add error handler
     this.server.on("error", this.logError);
 
     // start listening on port
     this.server.on("listening", () => {
-      LOGGER.info(`Pfila server running at ${this.protocol}://${this.host}:${this.port}/`);
+      LOGGER.info("Pfila server running at " + AppEnv.getUrl());
     });
   }
 

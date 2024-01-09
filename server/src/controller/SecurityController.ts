@@ -6,10 +6,10 @@ import { User } from "../entity/User";
 import { UserAudit } from "../entity/UserAudit";
 import { AppMailService } from "../app-mail-service";
 import { AppDataSource } from "../app-data-source";
-import { AppDomain } from "../app-domain";
 import { Request, Response } from "express";
 import { encrypt } from "../utils/helpers";
 import { payload } from "../dto/Token";
+import { AppEnv } from "../app-env";
 
 declare var process: any;
 
@@ -175,7 +175,7 @@ export class SecurityController {
   }
 
   private static async sendResetToken(user: User, token: string) {
-    const link = `${AppDomain}/admin/resetPassword/${token}`;
+    const link = `${AppEnv.getUrl()}/admin/resetPassword/${token}`;
     SecurityController.LOGGER.info(`resetLink:${link}`);
     await AppMailService.sendMail(user.email, "Pfila2024 - Passwort zurücksetzen",
       "Hallo\r\n\r\n" +

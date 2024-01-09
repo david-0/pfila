@@ -2,6 +2,7 @@ import * as fs from "fs";
 import { SignOptions } from "jsonwebtoken";
 import { Logger } from "log4js";
 import log4js = require("log4js");
+import { AppEnv } from "../app-env";
 
 const LOGGER: Logger = log4js.getLogger("JwtConfiguration");
 
@@ -11,16 +12,15 @@ export class JwtConfiguration {
   }
 
   static initDev(): JwtConfiguration {
-    const devSharedKey = "sdjhwisnd,inres";
-    return new JwtConfiguration(devSharedKey, devSharedKey, { expiresIn: "1h" });
+    return new JwtConfiguration(AppEnv.devSharedKey, AppEnv.devSharedKey, { expiresIn: "1h" });
   }
 
   static initProd(privateKeyFilename: string, publicKeyFilename: string): JwtConfiguration {
     if (!fs.existsSync(privateKeyFilename) || !fs.existsSync(publicKeyFilename)) {
       LOGGER.fatal(`in PRODUCTION-MODE, the private (${privateKeyFilename}) and public
-       (${publicKeyFilename}) key files must exist. `);
+       (${publicKeyFilename}) key files must exist.`);
       process.exit(0);
     }
-    return new JwtConfiguration(fs.readFileSync(privateKeyFilename), fs.readFileSync(publicKeyFilename),{ expiresIn: "1h", algorithm: "RS512" });
+    return new JwtConfiguration(fs.readFileSync(privateKeyFilename), fs.readFileSync(publicKeyFilename), { expiresIn: "1h", algorithm: "RS512" });
   }
 }

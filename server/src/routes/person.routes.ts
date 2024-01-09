@@ -2,6 +2,7 @@ import * as express from "express";
 import { authentification } from "../middleware/authentification.middleware";
 import { authorization } from "../middleware/authorization.middleware";
 import { PersonController } from "../controller/PersonController";
+
 const Router = express.Router();
 
 Router.get(
