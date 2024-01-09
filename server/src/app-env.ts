@@ -1,7 +1,7 @@
 
 import * as dotenv from "dotenv";
 
-dotenv.config({ path: "../../configuration/.env" });
+dotenv.config();
 
 class MyEnv {
     constructor(
