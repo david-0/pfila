@@ -28,7 +28,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
   public async beforeUpdate(event: UpdateEvent<Person>) {
     const person = plainToInstance(Person, event.entity);
     console.error("beforeUpdate:  currentUserId=" + event.queryRunner.data);
-    const currentUser = await event.manager.getRepository(User).findOne(event.queryRunner.data);
+    const currentUser = await event.manager.getRepository(User).findOne({ where: { id: +event.queryRunner.data } });
     console.error("beforeUpdate:  currentUser=" + currentUser + ", event.databaseEntity=" + event.databaseEntity);
     const userBeforeUpdate = await event.manager.getRepository(Person).findOne({
       where: { id: event.databaseEntity.id },
@@ -43,7 +43,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
       where: { id: event.databaseEntity.id },
       relations: ["subgroup", "subgroup.group"]
     });
-    const currentUser = await event.manager.getRepository(User).findOne(event.queryRunner.data);
+    const currentUser = await event.manager.getRepository(User).findOne({ where: { id: +event.queryRunner.data } });
     (await this.getUsersToNotifiy(event.manager)).forEach(u => this.notifiyPersonDeleted(u, userToDelete, currentUser));
   }
 
