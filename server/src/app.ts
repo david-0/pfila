@@ -119,8 +119,7 @@ class Server {
   }
 
   private staticRoutes(): void {
-//    const staticRoutePath =  path.join(__dirname, "client");
-    const staticRoutePath =  "client";
+    const staticRoutePath =  path.join(__dirname, "client");
     if (fs.existsSync(staticRoutePath)) {
       LOGGER.info(`Static-Route: serve files from "/client" in "/" __dirname=` + __dirname);
       this.app.use(express.static(staticRoutePath));
@@ -129,7 +128,7 @@ class Server {
 
   private defaultRoute(): void {
     this.app.get("*", function (req, res) {
-      res.sendFile("client/index.html");
+      res.sendFile(path.join(__dirname, "client", "index.html"));
     });
   }
 
