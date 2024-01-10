@@ -24,7 +24,7 @@ export class SecurityController {
         return res.status(500).json({ message: "email and password required" });
       }
       const userRepository = AppDataSource.getRepository(User);
-      const user = await SecurityController.findUserbyEmail(email)
+      const user = await SecurityController.findUserbyEmail(email);
       if (!user) {
         await SecurityController.authenticateAudit("not registered", user, { email, password }, req);
         return res.status(404).json({ message: "login NOT successfull" });
@@ -57,7 +57,6 @@ export class SecurityController {
       .getOne();
   }
 
-
   private static async authenticateAudit(actionResult: string, user, body: any, request: Request): Promise<void> {
     const audit = {
       user,
@@ -83,7 +82,7 @@ export class SecurityController {
   static async changeMyPassword(req: Request, res: Response) {
     const { id }: payload = req.body;
     const { email, password } = req.body;
-    const user = await AppDataSource.getRepository(User).findOne({ where: { id } });
+    const user = await SecurityController.findUserbyEmail(email);
     const isPasswordValid = encrypt.comparepassword(user.password, password);
     if (!isPasswordValid) {
       await SecurityController.authenticateAudit("password failed", user, { email, password }, req);
