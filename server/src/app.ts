@@ -1,6 +1,7 @@
 import * as compression from "compression";
 import * as cors from "cors";
 import * as fs from "fs";
+import * as path from "path";
 import * as express from "express";
 import * as http from "http";
 import * as https from "https";
@@ -118,7 +119,7 @@ class Server {
   }
 
   private staticRoutes(): void {
-    const staticRoutePath = __dirname + "/client";
+    const staticRoutePath =  path.join(__dirname, "client");
     if (fs.existsSync(staticRoutePath)) {
       LOGGER.info(`Static-Route: serve files from "/client" in "/" __dirname=` + __dirname);
       this.app.use(express.static(staticRoutePath));
