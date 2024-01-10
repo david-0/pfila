@@ -18,11 +18,15 @@ export class PersonController {
 
   static async update(req: Request, res: Response) {
     const { id } = req.params;
+    console.error("id: " + id + ", +id:" + +id);
     const newPerson = plainToInstance(Person, req.body);
     const personRepository = AppDataSource.getRepository(Person);
     const loadedPerson = await personRepository.findOne({ where: { id: +id } });
+    console.error("loadedPerson: " + JSON.stringify(loadedPerson));
     const mergedPerson = personRepository.merge(loadedPerson, newPerson);
+    console.error("mergedPerson: " + JSON.stringify(mergedPerson));
     const updatedPerson = await personRepository.save(mergedPerson);
+    console.error("updatedPerson: " + JSON.stringify(updatedPerson));
     return res.status(200).json(updatedPerson);
   }
 
