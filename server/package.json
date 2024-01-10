@@ -11,7 +11,7 @@
     "start": "ts-node src/app.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:run": " npm run typeorm migration:run -- -d ./src/app-data-source.ts",
-    "migration:gen": " npm run typeorm migration:generate -- -d ./src/app-data-source.ts migration/schema-migration" 
+    "migration:gen": " npm run typeorm migration:generate -- -d ./src/app-data-source.ts src/migration/schema-migration" 
   },
   "author": "",
   "license": "MIT",
