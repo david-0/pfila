@@ -57,6 +57,15 @@ export class SecurityController {
       .getOne();
   }
 
+  private static async findUserbyId(id: number): Promise<User | undefined> {
+    return await AppDataSource.getRepository(User)
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .leftJoinAndSelect("user.roles", "roles")
+      .where("user.id = :id", { id })
+      .getOne();
+  }
+
   private static async authenticateAudit(actionResult: string, user, body: any, request: Request): Promise<void> {
     const audit = {
       user,
@@ -80,12 +89,12 @@ export class SecurityController {
   }
 
   static async changeMyPassword(req: Request, res: Response) {
-    const { id }: payload = req.body;
-    const { email, password } = req.body;
-    const user = await SecurityController.findUserbyEmail(email);
-    const isPasswordValid = encrypt.comparepassword(user.password, password);
+    const id = req["currentUser"].id
+    const {currentPassword, password } = req.body;
+    const user = await SecurityController.findUserbyEmail(id);
+    const isPasswordValid = encrypt.comparepassword(user.password, currentPassword);
     if (!isPasswordValid) {
-      await SecurityController.authenticateAudit("password failed", user, { email, password }, req);
+      await SecurityController.authenticateAudit("password failed", user, { email: user.email, password }, req);
       return res.status(401).json({ message: "password not changed" });
     }
     await this.updatePassword(user.id, password);
