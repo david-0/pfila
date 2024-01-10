@@ -36,8 +36,8 @@ CREATE TABLE public."user" (
     id integer NOT NULL,
     email character varying NOT NULL,
     password character varying,
-    name character varying NOT NULL,
-    prename character varying NOT NULL
+    firstname character varying NOT NULL,
+    lastname character varying NOT NULL
 );
 ALTER TABLE public."user" OWNER TO pfila;
 CREATE SEQUENCE public.user_id_seq
@@ -66,7 +66,7 @@ COPY public.role (id, name) FROM stdin;
 \.
 
 COPY public."user" (id, email, password, firstname, lastname) FROM stdin;
-1	david.leuenberger@gmx.ch	$2a$10$mjKioWUv74sKmpJRwf.PVO8kdPnlKcYqk2XSpkq5flZcAtCZPuo8G	David	Leuenberger
+1	david.leuenberger@gmx.ch		David	Leuenberger
 \.
 
 COPY public.user_roles_role ("userId", "roleId") FROM stdin;
