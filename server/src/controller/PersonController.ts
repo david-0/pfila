@@ -2,6 +2,7 @@ import { plainToInstance } from "class-transformer";
 import { Person } from "../entity/Person";
 import { Request, Response } from "express";
 import { AppDataSource } from "../app-data-source";
+import { payload } from "../dto/Token";
 
 export class PersonController {
 
@@ -18,6 +19,7 @@ export class PersonController {
 
   static async update(req: Request, res: Response) {
     const { id } = req.params;
+    const { id: currentUserId }: payload = req.body;
     console.error("id: " + id + ", +id:" + +id);
     const newPerson = plainToInstance(Person, req.body);
     const personRepository = AppDataSource.getRepository(Person);
@@ -25,7 +27,7 @@ export class PersonController {
     console.error("loadedPerson: " + JSON.stringify(loadedPerson));
     const mergedPerson = personRepository.merge(loadedPerson, newPerson);
     console.error("mergedPerson: " + JSON.stringify(mergedPerson));
-    const updatedPerson = await personRepository.save(mergedPerson);
+    const updatedPerson = await personRepository.save(mergedPerson, { data: currentUserId });
     console.error("updatedPerson: " + JSON.stringify(updatedPerson));
     return res.status(200).json(updatedPerson);
   }
