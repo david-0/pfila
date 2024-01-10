@@ -27,6 +27,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
 
   public async beforeUpdate(event: UpdateEvent<Person>) {
     const person = plainToInstance(Person, event.entity);
+    console.error("beforeUpdate:  currentUserId=" + event.queryRunner.data);
     const currentUser = await event.manager.getRepository(User).findOne(event.queryRunner.data);
     const userBeforeUpdate = await event.manager.getRepository(Person).findOne({
       where: {id: event.databaseEntity.id},

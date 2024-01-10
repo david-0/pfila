@@ -26,7 +26,7 @@ export class PersonController {
     const loadedPerson = await personRepository.findOne({ where: { id: +id } });
     console.error("loadedPerson: " + JSON.stringify(loadedPerson));
     const mergedPerson = personRepository.merge(loadedPerson, newPerson);
-    console.error("mergedPerson: " + JSON.stringify(mergedPerson));
+    console.error("mergedPerson: " + JSON.stringify(mergedPerson) + ", currentUserId=" + currentUserId);
     const updatedPerson = await personRepository.save(mergedPerson, { data: currentUserId });
     console.error("updatedPerson: " + JSON.stringify(updatedPerson));
     return res.status(200).json(updatedPerson);
