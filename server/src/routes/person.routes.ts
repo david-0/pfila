@@ -55,8 +55,6 @@ Router.put(
 );
 Router.post(
     "/withAll",
-    authentification,
-    authorization(["admin"]),
     PersonController.save
 );
 Router.delete(
