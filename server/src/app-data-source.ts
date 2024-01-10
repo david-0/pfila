@@ -21,6 +21,7 @@ export const AppDataSource = new DataSource({
     synchronize: AppEnv.prod ? false : false,
     //logging logs sql command on the treminal
     logging: AppEnv.prod ? false : false,
+    migrationsRun: true,
     entities: [Group, Person, ResetToken, Role, Subgroup, UserAudit, User],
     migrations: [__dirname + "/migration/*.ts"],
     subscribers: [__dirname + "/subscriber/*.ts"],
