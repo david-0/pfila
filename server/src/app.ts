@@ -120,7 +120,7 @@ class Server {
   private staticRoutes(): void {
     const staticRoutePath = __dirname + "/client";
     if (fs.existsSync(staticRoutePath)) {
-      LOGGER.info(`Static-Route: serve files from "/client" in "/"`);
+      LOGGER.info(`Static-Route: serve files from "/client" in "/" __dirname=` + __dirname);
       this.app.use(express.static(__dirname + "/client", { redirect: true }));
     }
   }
