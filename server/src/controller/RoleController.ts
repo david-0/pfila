@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { Role } from "../entity/Role";
 import { Request, Response } from "express";
-import { AppDataSource } from "../app-data-source";
+import { AppDataSource } from "../utils/app-data-source";
 
 export class RoleController {
 

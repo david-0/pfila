@@ -11,6 +11,7 @@ import { Person } from "../entity/Person";
 import { Subgroup } from "../entity/Subgroup";
 import { User } from "../entity/User";
 import { MailService } from "../utils/MailService";
+import { AppEnv } from "../utils/app-env";
 
 @EventSubscriber()
 export class NotificationSubscriber implements EntitySubscriberInterface<Person> {
@@ -82,7 +83,7 @@ export class NotificationSubscriber implements EntitySubscriberInterface<Person>
       if (person.subgroup.group.name === "keine") {
         text += "In den nächsten Tagen werden wir mit ihnen Konkakt aufnehmen.\r\n";
       }
-      text += "Weitere Infomationen sind auf unserer Homepage https://usgwehlt-und-kröönt.ch zu finden.\r\n\r\n";
+      text += "Weitere Infomationen sind auf unserer Homepage "+AppEnv.getUrl()+" zu finden.\r\n\r\n";
       text += "Sollten sie dieses Mail irrtümlicherweise erhalten haben bitten wir sie mit uns Kontakt auf zu nehmen.\r\n\r\n";
       text += "Herzlichen Dank\r\nDas Pfila-Team";
       await this.mailService.sendMail(person.email, "Pfila2024 - Anmeldungbestätigung", text, null);

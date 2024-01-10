@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { AppJwtConfiguration } from "../app-jwt-configuration";
+import { AppJwtConfiguration } from "../utils/app-jwt-configuration";
 
 export const authentification = (
   req: Request,

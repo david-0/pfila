@@ -1,6 +1,6 @@
 import { LessThan } from "typeorm";
 import { ResetToken } from "../entity/ResetToken";
-import { AppDataSource } from "../app-data-source";
+import { AppDataSource } from "./app-data-source";
 
 export class ResetTokenEvictor {
 

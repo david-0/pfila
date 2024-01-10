@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { User } from "../entity/User";
 import { Request, Response } from "express";
-import { AppDataSource } from "../app-data-source";
+import { AppDataSource } from "../utils/app-data-source";
 
 export class UserController {
   static async get(req: Request, res: Response) {

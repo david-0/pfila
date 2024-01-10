@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { SignOptions } from "jsonwebtoken";
 import { Logger } from "log4js";
 import log4js = require("log4js");
-import { AppEnv } from "../app-env";
+import { AppEnv } from "./app-env";
 
 const LOGGER: Logger = log4js.getLogger("JwtConfiguration");
 

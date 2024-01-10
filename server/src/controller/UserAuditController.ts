@@ -1,5 +1,5 @@
 import { UserAudit } from "../entity/UserAudit";
-import { AppDataSource } from "../app-data-source";
+import { AppDataSource } from "../utils/app-data-source";
 import { Request, Response } from "express";
 
 export class UserAuditController {

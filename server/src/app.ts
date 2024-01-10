@@ -11,7 +11,7 @@ import "reflect-metadata";
 import { ResetTokenEvictor } from "./utils/ResetTokenEvictor";
 import { StartupNotifier } from "./utils/StartupNotifier";
 import { errorHandler } from "./middleware/error.middleware";
-import { AppDataSource } from "./app-data-source";
+import { AppDataSource } from "./utils/app-data-source";
 import { personRouter } from "./routes/person.routes";
 import { groupRouter } from "./routes/group.routes";
 import { roleRouter } from "./routes/role.routes";
@@ -19,7 +19,7 @@ import { userAuditRouter } from "./routes/useraudit.routes";
 import { userRouter } from "./routes/user.routes";
 import { subgroupRouter } from "./routes/subgroup.routes";
 import { securityRouter } from "./routes/security.routes";
-import { AppEnv } from "./app-env";
+import { AppEnv } from "./utils/app-env";
 
 const LOGGER: Logger = getLogger("Server");
 
@@ -121,7 +121,7 @@ class Server {
   private staticRoutes(): void {
     const staticRoutePath =  path.join(__dirname, "client");
     if (fs.existsSync(staticRoutePath)) {
-      LOGGER.info(`Static-Route: serve files from "/client" in "/" __dirname=` + __dirname);
+      LOGGER.info(`Static-Route: serve files from "/client" in "/"`);
       this.app.use(express.static(staticRoutePath));
     }
   }

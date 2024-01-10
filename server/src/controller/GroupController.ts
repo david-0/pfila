@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { Group } from "../entity/Group";
 import { Request, Response } from "express";
-import { AppDataSource } from "../app-data-source";
+import { AppDataSource } from "../utils/app-data-source";
 
 export class GroupController {
 

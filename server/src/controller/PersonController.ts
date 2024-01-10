@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { Person } from "../entity/Person";
 import { Request, Response } from "express";
-import { AppDataSource } from "../app-data-source";
+import { AppDataSource } from "../utils/app-data-source";
 import { payload } from "../dto/Token";
 
 export class PersonController {

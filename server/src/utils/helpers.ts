@@ -1,7 +1,7 @@
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcryptjs";
 import { payload } from "../dto/Token";
-import { AppJwtConfiguration } from "../app-jwt-configuration";
+import { AppJwtConfiguration } from "./app-jwt-configuration";
 
 export class encrypt {
     static async encryptpass(password: string) {

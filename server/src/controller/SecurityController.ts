@@ -4,12 +4,12 @@ import { v4 as uuid } from "uuid";
 import { ResetToken } from "../entity/ResetToken";
 import { User } from "../entity/User";
 import { UserAudit } from "../entity/UserAudit";
-import { AppMailService } from "../app-mail-service";
-import { AppDataSource } from "../app-data-source";
+import { AppMailService } from "../utils/app-mail-service";
+import { AppDataSource } from "../utils/app-data-source";
 import { Request, Response } from "express";
 import { encrypt } from "../utils/helpers";
 import { payload } from "../dto/Token";
-import { AppEnv } from "../app-env";
+import { AppEnv } from "../utils/app-env";
 
 declare var process: any;
 

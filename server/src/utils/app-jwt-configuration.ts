@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { JwtConfiguration } from "./utils/JwtConfiguration";
+import { JwtConfiguration } from "./JwtConfiguration";
 import { AppEnv } from "./app-env";
 
 export const AppJwtConfiguration =
