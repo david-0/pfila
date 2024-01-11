@@ -91,7 +91,7 @@ export class SecurityController {
   static async changeMyPassword(req: Request, res: Response) {
     const id = req["currentUser"].id
     const {currentPassword, password } = req.body;
-    const user = await SecurityController.findUserbyEmail(id);
+    const user = await SecurityController.findUserbyId(id);
     const isPasswordValid = encrypt.comparepassword(user.password, currentPassword);
     if (!isPasswordValid) {
       await SecurityController.authenticateAudit("password failed", user, { email: user.email, password }, req);
