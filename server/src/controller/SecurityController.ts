@@ -85,7 +85,7 @@ export class SecurityController {
     const user = await AppDataSource.getRepository(User).findOne({ where: { id: +userId } });
     await SecurityController.updatePassword(+userId, password);
     await SecurityController.changePasswordAudit(currentUser, user, req);
-    return user;
+    return res.status(200).json(user);
   }
 
   static async changeMyPassword(req: Request, res: Response) {
@@ -99,7 +99,7 @@ export class SecurityController {
     }
     await SecurityController.updatePassword(user.id, password);
     await SecurityController.changeMyPasswordAudit("success", user, req);
-    return user;
+    return res.status(200).json(user);
   }
 
   static async resetPasswordWithToken(req: Request, res: Response) {
@@ -109,13 +109,13 @@ export class SecurityController {
       await SecurityController.updatePassword(resetToken.user.id, password);
       await SecurityController.changePasswordWithTokenAudit("success", resetToken.user, req);
       await AppDataSource.getRepository(ResetToken).remove(resetToken);
-      return resetToken.user;
+      return res.status(200).json(resetToken.user);
     }
     await SecurityController.changePasswordWithTokenAudit("token not valid", resetToken.user, req);
     return res.status(401).json({ message: "Token not valid" });
   }
 
-  static async createTokenByEmail(req: Request, res: Response): Promise<void> {
+  static async createTokenByEmail(req: Request, res: Response) {
     const { email } = req.body;
     const user = await AppDataSource.getRepository(User).findOne({ where: { email }, relations: ["roles"] });
     if (user) {
@@ -129,6 +129,7 @@ export class SecurityController {
     } else {
       await SecurityController.sendResetTokenAudit(user, email, req);
     }
+    return res.status(200).json({});
   }
 
   private static async updatePassword(userId: number, unhashedPwd: string): Promise<void> {
