@@ -83,8 +83,8 @@ export class SecurityController {
 
     const currentUser = await AppDataSource.getRepository(User).findOne({ where: { id: +currentUserId } });
     const user = await AppDataSource.getRepository(User).findOne({ where: { id: +userId } });
-    await this.updatePassword(+userId, password);
-    await this.changePasswordAudit(currentUser, user, req);
+    await SecurityController.updatePassword(+userId, password);
+    await SecurityController.changePasswordAudit(currentUser, user, req);
     return user;
   }
 
@@ -97,22 +97,21 @@ export class SecurityController {
       await SecurityController.authenticateAudit("password failed", user, { email: user.email, password }, req);
       return res.status(401).json({ message: "password not changed" });
     }
-    console.error("changeMyPassword: " + JSON.stringify(user));
-    await this.updatePassword(user.id, password);
-    await this.changeMyPasswordAudit("success", user, req);
+    await SecurityController.updatePassword(user.id, password);
+    await SecurityController.changeMyPasswordAudit("success", user, req);
     return user;
   }
 
   static async resetPasswordWithToken(req: Request, res: Response) {
     const { token, password } = req.body;
-    const resetToken = await this.findResetTokenByToken(token);
+    const resetToken = await SecurityController.findResetTokenByToken(token);
     if (resetToken && resetToken.user) {
-      await this.updatePassword(resetToken.user.id, password);
-      await this.changePasswordWithTokenAudit("success", resetToken.user, req);
+      await SecurityController.updatePassword(resetToken.user.id, password);
+      await SecurityController.changePasswordWithTokenAudit("success", resetToken.user, req);
       await AppDataSource.getRepository(ResetToken).remove(resetToken);
       return resetToken.user;
     }
-    await this.changePasswordWithTokenAudit("token not valid", resetToken.user, req);
+    await SecurityController.changePasswordWithTokenAudit("token not valid", resetToken.user, req);
     return res.status(401).json({ message: "Token not valid" });
   }
 
@@ -125,10 +124,10 @@ export class SecurityController {
       resetToken.token = uuid();
       resetToken.validTo = moment().add(2, "h").toDate();
       await AppDataSource.getRepository(ResetToken).insert(resetToken);
-      await this.sendResetToken(user, resetToken.token);
-      await this.sendResetTokenAudit(user, email, req);
+      await SecurityController.sendResetToken(user, resetToken.token);
+      await SecurityController.sendResetTokenAudit(user, email, req);
     } else {
-      await this.sendResetTokenAudit(user, email, req);
+      await SecurityController.sendResetTokenAudit(user, email, req);
     }
   }
 
