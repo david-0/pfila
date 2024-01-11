@@ -17,5 +17,6 @@ export class UserAuditSubscriber implements EntitySubscriberInterface<UserAudit>
       event.entity.userAgent = event.queryRunner.data.headers["user-agent"];
     }
     event.entity.date = new Date();
+    console.error("beforeInser: " +  JSON.stringify(event.entity));
   }
 }
