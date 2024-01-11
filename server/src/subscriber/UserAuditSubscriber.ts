@@ -8,6 +8,7 @@ export class UserAuditSubscriber implements EntitySubscriberInterface<UserAudit>
   }
 
   public async beforeInsert(event: InsertEvent<UserAudit>) {
+    console.error("beforeInsert1: " +  JSON.stringify(event.entity));
     if (event.queryRunner.data && event.queryRunner.data.ip && event.queryRunner.data.ips) {
       const ips: string[] = [event.queryRunner.data.ip];
       ips.push(...event.queryRunner.data.ips);
@@ -17,6 +18,6 @@ export class UserAuditSubscriber implements EntitySubscriberInterface<UserAudit>
       event.entity.userAgent = event.queryRunner.data.headers["user-agent"];
     }
     event.entity.date = new Date();
-    console.error("beforeInser: " +  JSON.stringify(event.entity));
+    console.error("beforeInsert2: " +  JSON.stringify(event.entity));
   }
 }
