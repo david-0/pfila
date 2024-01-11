@@ -85,6 +85,9 @@ class Server {
 
   private createHttpsServer() {
     LOGGER.info("Start HTTPS server");
+    LOGGER.info("../.." + fs.readdirSync("../.."));
+    LOGGER.info("../../certificate" + fs.readdirSync("../../certificate"));
+    LOGGER.info("../../certificate/ssl" + fs.readdirSync("../../certificate/ssl"));
     return https.createServer({
       ca: fs.readFileSync("../../certificate/ssl/chain.pem"),
       cert: fs.readFileSync("../../certificate/ssl/cert.pem"),
