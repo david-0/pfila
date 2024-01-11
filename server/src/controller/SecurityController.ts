@@ -97,6 +97,7 @@ export class SecurityController {
       await SecurityController.authenticateAudit("password failed", user, { email: user.email, password }, req);
       return res.status(401).json({ message: "password not changed" });
     }
+    console.error("changeMyPassword: " + JSON.stringify(user));
     await this.updatePassword(user.id, password);
     await this.changeMyPasswordAudit("success", user, req);
     return user;
