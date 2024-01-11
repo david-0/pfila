@@ -23,6 +23,6 @@ export const AppDataSource = new DataSource({
     logging: AppEnv.prod ? false : false,
     migrationsRun: true,
     entities: [Group, Person, ResetToken, Role, Subgroup, UserAudit, User],
-    migrations: [__dirname + "/migration/*.ts"],
-    subscribers: [__dirname + "/subscriber/*.ts"],
+    migrations: [__dirname + "/../migration/*.ts"],
+    subscribers: [__dirname + "/../subscriber/*.ts"],
 });
