@@ -61,3 +61,66 @@ npm install -g @angular/cli
 npm install tsc
 npm install typescript
 ./update.sh
+
+# letsencrypt - certbot
+## install certbot
+
+https://certbot.eff.org/instructions?ws=other&os=ubuntufocal
+
+ssh root@<hetzner.cloud.vm>
+
+sudo apt install snapd
+
+sudo snap install --classic certbot
+
+ln -s /snap/bin/certbot /usr/bin/certbot
+
+certbot certonly --standalone
+-> answer questions
+...
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/www.verschleppt.ch/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/www.verschleppt.ch/privkey.pem
+This certificate expires on 2024-04-10.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+...
+
+docker volume inspect pfila_certificate --> <path>
+
+cd <path>  (/var/lib/docker/volumes/pfila_certificate/_data)
+mkdir ssl
+cd ssl
+
+ln -s /etc/letsencrypt/live/www.verschleppt.ch/cert.pem
+ln -s /etc/letsencrypt/live/www.verschleppt.ch/privkey.pem
+ln -s /etc/letsencrypt/live/www.verschleppt.ch/chain.pem
+
+
+### pre and post hooks for renew certificate
+During the renewal of the certificate the port 80 is needed. So there must be a script, that stops the node server and an otherone which starts him again.
+cat > /etc/letsencrypt/renewal-hooks/pre/stopPfila.sh << EOF
+#!/bin/bash
+docker stop \$(docker ps | grep pfila_app | cut -d\   -f1)
+EOF
+chmod 700 /etc/letsencrypt/renewal-hooks/pre/stopPfila.sh
+cat > /etc/letsencrypt/renewal-hooks/post/startPfila.sh << EOF
+#!/bin/bash
+docker start \$(docker container ls --all | grep pfila_app | cut -d\   -f1)
+EOF
+chmod 700 /etc/letsencrypt/renewal-hooks/post/startPfila.sh
+
+## jwt pub/private keys (only production)
+see: https://en.wikibooks.org/wiki/Cryptography/Generate_a_keypair_using_OpenSSL
+
+docker volume inspect pfila_certificate --> <path>
+
+cd <path>  (/var/lib/docker/volumes/pfila_certificate/_data)
+mkdir jwt
+cd jwt
+### create private key
+openssl genpkey -algorithm RSA -out private-key.pem -pkeyopt rsa_keygen_bits:2048
+### extract public key
+openssl rsa -pubout -in private-key.pem -out public-key.pem
+
+
