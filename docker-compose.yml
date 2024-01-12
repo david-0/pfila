@@ -14,6 +14,10 @@ services:
     volumes:
     - certificate:/certificate
     - configuration:/configuration
+    - type: bind
+      read_only: true
+      source: /etc/letsencrypt
+      target: /etc/letsencrypt
 
   db:
     container_name: postgres
