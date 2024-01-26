@@ -10,8 +10,8 @@
     "build": "tsc",
     "start": "ts-node src/app.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:run": " npm run typeorm migration:run -- -d ./src/utils/app-data-source.ts",
-    "migration:gen": " npm run typeorm migration:generate -- -d ./src/utils/app-data-source.ts src/migration/schema-migration" 
+    "migration:run": "npm run typeorm migration:run -- -d ./src/utils/app-data-source.ts",
+    "migration:gen": "npm run typeorm migration:generate -- -d ./src/utils/app-data-source.ts src/migration/schema-migration" 
   },
   "author": "",
   "license": "MIT",
