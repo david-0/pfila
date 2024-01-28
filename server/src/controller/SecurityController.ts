@@ -10,6 +10,8 @@ import { Request, Response } from "express";
 import { encrypt } from "../utils/helpers";
 import { payload } from "../dto/Token";
 import { AppEnv } from "../utils/app-env";
+import { EntityManager } from "typeorm";
+import { EntryType } from "perf_hooks";
 
 declare var process: any;
 
@@ -18,38 +20,39 @@ export class SecurityController {
   private static LOGGER: Logger = getLogger("SecurityController");
 
   static async login(req: Request, res: Response) {
-    try {
-      const { email, password } = req.body;
-      if (!email || !password) {
-        return res.status(500).json({ message: "email and password required" });
+    return await AppDataSource.transaction(async (manager) => {
+      try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+          return res.status(500).json({ message: "email and password required" });
+        }
+        const user = await SecurityController.findUserbyEmail(manager, email);
+        if (!user) {
+          await SecurityController.authenticateAudit(manager, "not registered", user, { email, password }, req);
+          return res.status(403).json({ message: "login NOT successfull" });
+        }
+        const isPasswordValid = encrypt.comparepassword(user.password, password);
+        if (!isPasswordValid) {
+          await SecurityController.authenticateAudit(manager, "password failed", user, { email, password }, req);
+          return res.status(403).json({ message: "login NOT successfull" });
+        }
+        await SecurityController.authenticateAudit(manager, "success", user, { email, password }, req);
+        const token = encrypt.generateToken({
+          id: user.id,
+          roles: user.roles.map(r => r.name),
+          groups: []
+        });
+        return res.status(200).json({ message: "Login successful", user, token });
       }
-      const userRepository = AppDataSource.getRepository(User);
-      const user = await SecurityController.findUserbyEmail(email);
-      if (!user) {
-        await SecurityController.authenticateAudit("not registered", user, { email, password }, req);
-        return res.status(404).json({ message: "login NOT successfull" });
+      catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
       }
-      const isPasswordValid = encrypt.comparepassword(user.password, password);
-      if (!isPasswordValid) {
-        await SecurityController.authenticateAudit("password failed", user, { email, password }, req);
-        return res.status(404).json({ message: "login NOT successfull" });
-      }
-      await SecurityController.authenticateAudit("success", user, { email, password }, req);
-      const token = encrypt.generateToken({
-        id: user.id,
-        roles: user.roles.map(r => r.name),
-        groups: []
-      });
-      return res.status(200).json({ message: "Login successful", user, token });
-    }
-    catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Internal server error" });
-    }
+    });
   }
 
-  private static async findUserbyEmail(emailAddress: string): Promise<User | undefined> {
-    return await AppDataSource.getRepository(User)
+  private static async findUserbyEmail(manager: EntityManager, emailAddress: string): Promise<User | undefined> {
+    return await manager.getRepository(User)
       .createQueryBuilder("user")
       .addSelect("user.password")
       .leftJoinAndSelect("user.roles", "roles")
@@ -57,8 +60,8 @@ export class SecurityController {
       .getOne();
   }
 
-  private static async findUserbyId(id: number): Promise<User | undefined> {
-    return await AppDataSource.getRepository(User)
+  private static async findUserbyId(manager: EntityManager, id: number): Promise<User | undefined> {
+    return await manager.getRepository(User)
       .createQueryBuilder("user")
       .addSelect("user.password")
       .leftJoinAndSelect("user.roles", "roles")
@@ -66,121 +69,129 @@ export class SecurityController {
       .getOne();
   }
 
-  private static async authenticateAudit(actionResult: string, user, body: any, request: Request): Promise<void> {
+  private static async authenticateAudit(manager: EntityManager, actionResult: string, user, body: any, request: Request): Promise<void> {
     const audit = {
       user,
       action: "authenticate",
       actionResult: actionResult,
       additionalData: body.email,
     };
-    await AppDataSource.getRepository(UserAudit).save(audit, { data: request });
+    await manager.getRepository(UserAudit).save(audit, { data: request });
   }
 
   static async changePassword(req: Request, res: Response) {
-    const { id: currentUserId }: payload = req.body;
-    const { password } = req.body;
-    const { id: userId } = req.params;
+    return await AppDataSource.transaction(async (manager) => {
+      const { id: currentUserId }: payload = req.body;
+      const { password } = req.body;
+      const { id: userId } = req.params;
 
-    const currentUser = await AppDataSource.getRepository(User).findOne({ where: { id: +currentUserId } });
-    const user = await AppDataSource.getRepository(User).findOne({ where: { id: +userId } });
-    await SecurityController.updatePassword(+userId, password);
-    await SecurityController.changePasswordAudit(currentUser, user, req);
-    return res.status(200).json(user);
+      const currentUser = await manager.getRepository(User).findOne({ where: { id: +currentUserId } });
+      const user = await manager.getRepository(User).findOne({ where: { id: +userId } });
+      await SecurityController.updatePassword(manager, +userId, password);
+      await SecurityController.changePasswordAudit(manager, currentUser, user, req);
+      return res.status(200).json(user);
+    });
   }
 
   static async changeMyPassword(req: Request, res: Response) {
-    const id = req["currentUser"].id;
-    const {currentPassword, password } = req.body;
-    const user = await SecurityController.findUserbyId(id);
-    const isPasswordValid = encrypt.comparepassword(user.password, currentPassword);
-    if (!isPasswordValid) {
-      await SecurityController.authenticateAudit("password failed", user, { email: user.email, password }, req);
-      return res.status(401).json({ message: "password not changed" });
-    }
-    await SecurityController.updatePassword(user.id, password);
-    await SecurityController.changeMyPasswordAudit("success", user, req);
-    return res.status(200).json(user);
+    return await AppDataSource.transaction(async (manager) => {
+      const id = req["currentUser"].id;
+      const { currentPassword, password } = req.body;
+      const user = await SecurityController.findUserbyId(manager, id);
+      const isPasswordValid = encrypt.comparepassword(user.password, currentPassword);
+      if (!isPasswordValid) {
+        await SecurityController.authenticateAudit(manager, "password failed", user, { email: user.email, password }, req);
+        return res.status(401).json({ message: "password not changed" });
+      }
+      await SecurityController.updatePassword(manager, user.id, password);
+      await SecurityController.changeMyPasswordAudit(manager, "success", user, req);
+      return res.status(200).json(user);
+    });
   }
 
   static async resetPasswordWithToken(req: Request, res: Response) {
-    const { token, password } = req.body;
-    const resetToken = await SecurityController.findResetTokenByToken(token);
-    if (resetToken && resetToken.user) {
-      await SecurityController.updatePassword(resetToken.user.id, password);
-      await SecurityController.changePasswordWithTokenAudit("success", resetToken.user, req);
-      await AppDataSource.getRepository(ResetToken).remove(resetToken);
-      return res.status(200).json(resetToken.user);
-    }
-    await SecurityController.changePasswordWithTokenAudit("token not valid", resetToken.user, req);
-    return res.status(401).json({ message: "Token not valid" });
+    return await AppDataSource.transaction(async (manager) => {
+      const { token, password } = req.body;
+      const resetToken = await SecurityController.findResetTokenByToken(manager, token);
+      if (resetToken && resetToken.user) {
+        await SecurityController.updatePassword(manager, resetToken.user.id, password);
+        await SecurityController.changePasswordWithTokenAudit(manager, "success", resetToken.user, req);
+        await manager.getRepository(ResetToken).remove(resetToken);
+        return res.status(200).json(resetToken.user);
+      }
+      await SecurityController.changePasswordWithTokenAudit(manager, "token not valid", resetToken.user, req);
+      return res.status(401).json({ message: "Token not valid" });
+    });
   }
 
   static async createTokenByEmail(req: Request, res: Response) {
-    const { email } = req.body;
-    const user = await AppDataSource.getRepository(User).findOne({ where: { email }, relations: ["roles"] });
-    if (user) {
-      const resetToken = new ResetToken();
-      resetToken.user = user;
-      resetToken.token = uuid();
-      resetToken.validTo = moment().add(2, "h").toDate();
-      await AppDataSource.getRepository(ResetToken).insert(resetToken);
-      await SecurityController.sendResetToken(user, resetToken.token);
-      await SecurityController.sendResetTokenAudit(user, email, req);
-    } else {
-      await SecurityController.sendResetTokenAudit(user, email, req);
-    }
-    return res.status(200).json({});
+    return await AppDataSource.transaction(async (manager) => {
+      const { email } = req.body;
+      const user = await manager.getRepository(User).findOne({ where: { email }, relations: ["roles"] });
+      if (user) {
+        const resetToken = new ResetToken();
+        resetToken.user = user;
+        resetToken.token = uuid();
+        resetToken.validTo = moment().add(2, "h").toDate();
+        await manager.getRepository(ResetToken).insert(resetToken);
+        await SecurityController.sendResetToken(user, resetToken.token);
+        await SecurityController.sendResetTokenAudit(manager, user, email, req);
+      } else {
+        await SecurityController.sendResetTokenAudit(manager, user, email, req);
+      }
+      return res.status(200).json({});
+    });
   }
 
-  private static async updatePassword(userId: number, unhashedPwd: string): Promise<void> {
-    await AppDataSource.getRepository(User).update({ id: userId }, { password: unhashedPwd });
+  private static async updatePassword(manager: EntityManager, userId: number, unhashedPwd: string): Promise<void> {
+    await manager.getRepository(User).update({ id: userId }, { password: unhashedPwd });
   }
 
-  private static async findResetTokenByToken(token: string): Promise<ResetToken | undefined> {
-    const resetToken = await AppDataSource.getRepository(ResetToken).findOne({ where: { token }, relations: ["user"] });
+  private static async findResetTokenByToken(manager: EntityManager, token: string): Promise<ResetToken | undefined> {
+    const resetToken = await manager.getRepository(ResetToken).findOne({ where: { token }, relations: ["user"] });
     if (resetToken && (resetToken.validTo >= new Date())) {
       return resetToken;
     }
     return undefined;
   }
 
-  private static async changePasswordAudit(currentUser: User, userToChange: User, request: Request) {
+  private static async changePasswordAudit(manager: EntityManager, currentUser: User, userToChange: User, request: Request) {
     const audit = {
       user: currentUser,
       action: "changePassword",
       actionResult: "ok",
       additionalData: userToChange.email,
     };
-    await AppDataSource.getRepository(UserAudit).save(audit, { data: request });
+    await manager.getRepository(UserAudit).save(audit, { data: request });
   }
 
 
-  private static async changeMyPasswordAudit(actionResult: string, user: User, request: Request) {
+  private static async changeMyPasswordAudit(manager: EntityManager, actionResult: string, user: User, request: Request) {
     const audit = {
       user: user,
       action: "changeMyPassword",
       actionResult: actionResult,
     };
-    await AppDataSource.getRepository(UserAudit).save(audit, { data: request });
+    await manager.getRepository(UserAudit).save(audit, { data: request });
   }
 
-  private static async changePasswordWithTokenAudit(actionResult: string, user: User, request: Request) {
+  private static async changePasswordWithTokenAudit(manager: EntityManager, actionResult: string, user: User, request: Request) {
     const audit = {
       user: user,
       action: "changePasswordWithToken",
       actionResult: actionResult,
     };
-    await AppDataSource.getRepository(UserAudit).save(audit, { data: request });
+    await manager.getRepository(UserAudit).save(audit, { data: request });
   }
 
-  private static async sendResetTokenAudit(user: User, email: string, request: Request) {
+  private static async sendResetTokenAudit(manager: EntityManager, user: User, email: string, request: Request) {
     const audit = {
       user,
       action: "sendResetToken",
       actionResult: user ? "user found" : "user not found",
       additionalData: user ? undefined : email,
     };
-    await AppDataSource.getRepository(UserAudit).save(audit, { data: request });
+    await manager.getRepository(UserAudit).save(audit, { data: request });
   }
 
   private static async sendResetToken(user: User, token: string) {
@@ -201,13 +212,5 @@ export class SecurityController {
       "<p>Wenn Sie dieses Mail irrtümlich erhalten haben, können Sie es ignorieren.</p>" +
       "<p>Webmaster Pfila 2024</p>"
     );
-  }
-}
-
-declare global {
-  namespace Express {
-    export interface Request {
-      user?: any
-    }
   }
 }

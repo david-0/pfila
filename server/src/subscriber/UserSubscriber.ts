@@ -1,6 +1,6 @@
-import * as bcrypt from "bcryptjs";
-import {EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent} from "typeorm";
-import {User} from "../entity/User";
+import { EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent } from "typeorm";
+import { User } from "../entity/User";
+import { encrypt } from "../utils/helpers";
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
@@ -10,13 +10,13 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 
   public async beforeUpdate(event: UpdateEvent<User>) {
     if (event.entity && event.entity.password) {
-      event.entity.password =  await bcrypt.hash(event.entity.password, 10);
+      event.entity.password = await encrypt.encryptpass(event.entity.password);
     }
   }
 
   public async beforeInsert(event: InsertEvent<User>) {
     if (event.entity && event.entity.password) {
-      event.entity.password =  await bcrypt.hash(event.entity.password, 10);
+      event.entity.password = await encrypt.encryptpass(event.entity.password);
     }
   }
 }
