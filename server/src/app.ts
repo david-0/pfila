@@ -49,9 +49,6 @@ class Server {
         this.staticRoutes();
         this.defaultRoute();
         this.createServer();
-        this.app.get("*", (req: express.Request, res: express.Response) => {
-          res.status(505).json({ message: "Bad Request" });
-        });
 
         // Start listening
         this.listen();
