@@ -36,9 +36,8 @@ export class PersonController {
 
   static async save(req: Request, res: Response) {
     return await AppDataSource.transaction(async (manager) => {
-      const currentUserId = req["currentUser"].id;
       const newPerson = plainToInstance(Person, req.body);
-      const person = await manager.getRepository(Person).save(newPerson, { data: +currentUserId });
+      const person = await manager.getRepository(Person).save(newPerson);
       return res.status(200).json(person);
     });
   }
