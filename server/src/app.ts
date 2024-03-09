@@ -12,14 +12,14 @@ import { ResetTokenEvictor } from "./utils/ResetTokenEvictor";
 import { StartupNotifier } from "./utils/StartupNotifier";
 import { errorHandler } from "./middleware/error.middleware";
 import { AppDataSource } from "./utils/app-data-source";
-import { personRouter } from "./routes/person.routes";
-import { groupRouter } from "./routes/group.routes";
-import { roleRouter } from "./routes/role.routes";
-import { userAuditRouter } from "./routes/useraudit.routes";
-import { userRouter } from "./routes/user.routes";
-import { subgroupRouter } from "./routes/subgroup.routes";
-import { securityRouter } from "./routes/security.routes";
 import { AppEnv } from "./utils/app-env";
+import { PersonRouteBuilder } from "./routes/person-route-builder";
+import { GroupRouteBuilder } from "./routes/group-route-builder";
+import { RoleRouteBuilder } from "./routes/role-route-builder";
+import { SecurityRouteBuilder } from "./routes/security-route-builder";
+import { SubgroupRouteBuilder } from "./routes/subgroup-route-builder";
+import { UserRouteBuilder } from "./routes/user-route-builder";
+import { UserAuditRouteBuilder } from "./routes/useraudit-route-builder";
 
 const LOGGER: Logger = getLogger("Server");
 
@@ -131,13 +131,13 @@ class Server {
 
   private routes(): void {
     this.app.use(cors(this.corsOptions()));
-    this.app.use("/api/person", personRouter);
-    this.app.use("/api/group", groupRouter);
-    this.app.use("/api/role", roleRouter);
-    this.app.use("/api/security", securityRouter);
-    this.app.use("/api/subgroup", subgroupRouter);
-    this.app.use("/api/user", userRouter);
-    this.app.use("/api/useraudit", userAuditRouter);
+    this.app.use("/api/person", PersonRouteBuilder.routes());
+    this.app.use("/api/group", GroupRouteBuilder.routes());
+    this.app.use("/api/role", RoleRouteBuilder.routes());
+    this.app.use("/api/security", SecurityRouteBuilder.routes());
+    this.app.use("/api/subgroup", SubgroupRouteBuilder.routes());
+    this.app.use("/api/user", UserRouteBuilder.routes());
+    this.app.use("/api/useraudit", UserAuditRouteBuilder.routes());
   }
 
   // Start HTTP server listening
