@@ -24,20 +24,21 @@ export class PersonController {
   static async update(req: Request, res: Response) {
     return await AppDataSource.transaction(async (manager) => {
       const { id } = req.params;
-      const { id: currentUserId }: payload = req.body;
+      const currentUserId = req["currentUser"].id;
       const newPerson = plainToInstance(Person, req.body);
       const personRepository = manager.getRepository(Person);
       const loadedPerson = await personRepository.findOne({ where: { id: +id } });
       const mergedPerson = personRepository.merge(loadedPerson, newPerson);
-      const updatedPerson = await personRepository.save(mergedPerson, { data: currentUserId });
+      const updatedPerson = await personRepository.save(mergedPerson, { data: +currentUserId });
       return res.status(200).json(updatedPerson);
     });
   }
 
   static async save(req: Request, res: Response) {
     return await AppDataSource.transaction(async (manager) => {
+      const currentUserId = req["currentUser"].id;
       const newPerson = plainToInstance(Person, req.body);
-      const person = await manager.getRepository(Person).save(newPerson);
+      const person = await manager.getRepository(Person).save(newPerson, { data: +currentUserId });
       return res.status(200).json(person);
     });
   }
@@ -45,10 +46,10 @@ export class PersonController {
   static async delete(req: Request, res: Response) {
     return await AppDataSource.transaction(async (manager) => {
       const { id } = req.params;
-      const { id: currentUserId }: payload = req.body;
+      const currentUserId = req["currentUser"].id;
       const personToDelete = new Person();
       personToDelete.id = +id;
-      const deletedPerson = await manager.getRepository(Person).remove(personToDelete, { data: currentUserId });
+      const deletedPerson = await manager.getRepository(Person).remove(personToDelete, { data: +currentUserId });
       return res.status(200).json(deletedPerson);
     });
   }

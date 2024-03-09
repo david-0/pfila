@@ -4,7 +4,7 @@ import {Subgroup} from "./Subgroup";
 @Entity()
 export class Person {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
   @Column({nullable: true})
   public createDate?: Date;
   @Column()
