@@ -12,12 +12,8 @@ services:
     depends_on:
       - db
     volumes:
-    - certificate:/certificate
-    - configuration:/configuration
-    - type: bind
-      read_only: true
-      source: /etc/letsencrypt
-      target: /etc/letsencrypt
+      - certificate:/certificate
+      - configuration:/configuration
 
   db:
     container_name: postgres
