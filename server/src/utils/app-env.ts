@@ -1,5 +1,9 @@
-
 import * as dotenv from "dotenv";
+import * as fs from "fs";
+import { Logger } from "log4js";
+import { AppLogging } from "./app-logging";
+
+const LOGGER: Logger = AppLogging.getLogger("AppEnv");
 
 dotenv.config();
 
@@ -15,6 +19,10 @@ class MyEnv {
         public readonly portHttp: number,
         public readonly host: string,
         public readonly devSharedKey: string) {
+        if (!fs.existsSync(".env")) {
+            LOGGER.fatal(".env file not found. Aborting ...");
+            return process.exit();
+        }
     }
 
     public getPort(): number {
