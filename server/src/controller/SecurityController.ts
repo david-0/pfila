@@ -1,4 +1,4 @@
-import { getLogger, Logger } from "log4js";
+import { Logger } from "log4js";
 import * as moment from "moment";
 import { v4 as uuid } from "uuid";
 import { ResetToken } from "../entity/ResetToken";
@@ -11,13 +11,13 @@ import { encrypt } from "../utils/helpers";
 import { payload } from "../dto/Token";
 import { AppEnv } from "../utils/app-env";
 import { EntityManager } from "typeorm";
-import { EntryType } from "perf_hooks";
+import { AppLogging } from "../utils/app-logging";
 
 declare var process: any;
 
 export class SecurityController {
 
-  private static LOGGER: Logger = getLogger("SecurityController");
+  private static LOGGER: Logger = AppLogging.getLogger("SecurityController");
 
   static async login(req: Request, res: Response) {
     return await AppDataSource.transaction(async (manager) => {

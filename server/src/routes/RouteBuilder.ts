@@ -3,9 +3,10 @@ import { AppJwtConfiguration } from "../utils/app-jwt-configuration";
 import { Request, Response, NextFunction, Router } from "express";
 import { AppDataSource } from "../utils/app-data-source";
 import { QueryFailedError } from "typeorm";
-import { getLogger, Logger } from "log4js";
+import { Logger } from "log4js";
+import { AppLogging } from "../utils/app-logging";
 
-const LOGGER: Logger = getLogger("RouteBuilder");
+const LOGGER: Logger = AppLogging.getLogger("RouteBuilder");
 
 export class RouteBuilder {
     private router: Router;
@@ -23,18 +24,18 @@ export class RouteBuilder {
                 this.router.get(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             } else {
                 this.router.get(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.authorization(roles, req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             }
         } else {
             this.router.get(url,
                 async (req, res, next) => this.exceptionHandler(req, res, next,
-                    async (req, res, next) => callback(req, res, next)));    
+                    async (req, res, next) => callback(req, res, next)));
         }
         return this;
     }
@@ -44,18 +45,18 @@ export class RouteBuilder {
                 this.router.put(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             } else {
                 this.router.put(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.authorization(roles, req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             }
         } else {
             this.router.put(url,
                 async (req, res, next) => this.exceptionHandler(req, res, next,
-                    async (req, res, next) => callback(req, res, next)));    
+                    async (req, res, next) => callback(req, res, next)));
         }
         return this;
     }
@@ -66,18 +67,18 @@ export class RouteBuilder {
                 this.router.post(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             } else {
                 this.router.post(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.authorization(roles, req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             }
         } else {
             this.router.post(url,
                 async (req, res, next) => this.exceptionHandler(req, res, next,
-                    async (req, res, next) => callback(req, res, next)));    
+                    async (req, res, next) => callback(req, res, next)));
         }
         return this;
     }
@@ -88,18 +89,18 @@ export class RouteBuilder {
                 this.router.delete(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             } else {
                 this.router.delete(url,
                     async (req, res, next) => this.authentification(req, res, next),
                     async (req, res, next) => this.authorization(roles, req, res, next),
                     async (req, res, next) => this.exceptionHandler(req, res, next,
-                        async (req, res, next) => callback(req, res, next)));        
+                        async (req, res, next) => callback(req, res, next)));
             }
         } else {
             this.router.delete(url,
                 async (req, res, next) => this.exceptionHandler(req, res, next,
-                    async (req, res, next) => callback(req, res, next)));    
+                    async (req, res, next) => callback(req, res, next)));
         }
         return this;
     }

@@ -5,7 +5,7 @@ import * as path from "path";
 import * as express from "express";
 import * as http from "http";
 import * as https from "https";
-import { configure, getLogger, Logger } from "log4js";
+import { Logger } from "log4js";
 import "reflect-metadata";
 
 import { ResetTokenEvictor } from "./utils/ResetTokenEvictor";
@@ -20,8 +20,9 @@ import { SecurityRouteBuilder } from "./routes/security-route-builder";
 import { SubgroupRouteBuilder } from "./routes/subgroup-route-builder";
 import { UserRouteBuilder } from "./routes/user-route-builder";
 import { UserAuditRouteBuilder } from "./routes/useraudit-route-builder";
+import { AppLogging } from "./utils/app-logging";
 
-const LOGGER: Logger = getLogger("Server");
+const LOGGER: Logger = AppLogging.getLogger("Server");
 
 class Server {
 
@@ -33,10 +34,6 @@ class Server {
   private server: any;
 
   constructor() {
-    configure({
-      appenders: { out: { type: "stdout" } },
-      categories: { default: { appenders: ["out"], level: "info" } },
-    });
     this.logServerType();
     this.app = express();
     this.app.use(compression());
@@ -116,7 +113,7 @@ class Server {
   }
 
   private staticRoutes(): void {
-    const staticRoutePath =  path.join(__dirname, "client");
+    const staticRoutePath = path.join(__dirname, "client");
     if (fs.existsSync(staticRoutePath)) {
       LOGGER.info(`Static-Route: serve files from "/client" in "/"`);
       this.app.use(express.static(staticRoutePath));

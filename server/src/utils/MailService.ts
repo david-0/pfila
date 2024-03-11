@@ -2,9 +2,10 @@ import * as fs from "fs";
 import * as nodemailer from "nodemailer";
 import { SentMessageInfo } from "nodemailer";
 
-import { getLogger, Logger } from "log4js";
+import { Logger } from "log4js";
+import { AppLogging } from "./app-logging";
 
-const LOGGER: Logger = getLogger("Server");
+const LOGGER: Logger = AppLogging.getLogger("Server");
 export class MailService {
   private host: string;
   private port: number;
@@ -27,7 +28,7 @@ export class MailService {
     try {
       return await this.trySendMail(to, subject, text, html);
     } catch (err) {
-      LOGGER.error("Could not send email. Error:"+err);
+      LOGGER.error("Could not send email. Error:" + err);
       return Promise.resolve(err);
     }
   }
