@@ -17,7 +17,7 @@ export class CsvExporter {
   private readonly fields: Field[] = [];
 
   constructor(private groupRestService: GroupWithSubgroupsRestService) {
-    this.fields.push(new Field('Anmeldedatum', (p: IPerson) => DateTime.fromJSDate(p.createDate).toFormat('YYYY-MM-DD HH:mm:ss')));
+    this.fields.push(new Field('Anmeldedatum', (p: IPerson) => DateTime.fromJSDate(new Date(p.createDate)).toFormat('yyyy-LL-dd HH:mm:ss')));
     this.fields.push(new Field('Vorname', (p: IPerson) => p.firstname));
     this.fields.push(new Field('Nachname', (p: IPerson) => p.lastname));
     this.fields.push(new Field('Strasse', (p: IPerson) => p.street));
